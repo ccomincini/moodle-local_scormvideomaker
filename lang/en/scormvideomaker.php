@@ -30,6 +30,7 @@ $string['plugindesc'] = 'Create SCORM packages from video URLs (Vimeo, YouTube, 
 
 // Admin menu.
 $string['createscrorm'] = 'Create SCORM Video Package';
+$string['createscorm'] = 'Create SCORM Package';
 
 // Settings.
 $string['setting_enabled'] = 'Enable SCORM Video Maker';

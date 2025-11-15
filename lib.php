@@ -16,7 +16,7 @@
 /**
  * Library functions for SCORM Video Maker.
  *
- * @package scormvideomaker
+ * @package local_scormvideomaker
  * @copyright 2025 Carlo Comincini <carlo@comincini.it>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+          xmlns:adlcp="http://www.adlnet.org/xsd/adl_cp_v1_2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1
+          http://www.imsglobal.org/xsd/imscp_v1p1/imscp_v1p1.xsd
+          http://www.adlnet.org/xsd/adl_cp_v1_2
+          http://www.adlnet.org/xsd/adl_cp_v1_2/adlcp_v1_2.xsd"
+          identifier="org.moodle.local_scormvideomaker_{{TIMESTAMP}}"
+          version="1.1">
+
+    <metadata>
+        <schema>ADL SCORM</schema>
+        <schemaversion>1.2</schemaversion>
+    </metadata>
+
+    <organizations default="org1">
+        <organization identifier="org1">
+            <title>{{TITLE}}</title>
+            <item identifier="item1" identifierref="res1">
+                <title>{{TITLE}}</title>
+            </item>
+        </organization>
+    </organizations>
+
+    <resources>
+        <resource identifier="res1" type="webcontent" href="index.html" adlcp:scormType="sco">
+            <file href="index.html"/>
+            <file href="js/scorm_runtime.js"/>
+            <file href="js/video_player.js"/>
+            <file href="css/style.css"/>
+        </resource>
+    </resources>
+
+</manifest>
+

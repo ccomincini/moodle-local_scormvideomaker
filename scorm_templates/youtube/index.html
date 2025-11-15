@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}}</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="scorm-container">
+        <div class="scorm-header">
+            <h1>{{TITLE}}</h1>
+            <div class="scorm-description">{{DESCRIPTION}}</div>
+        </div>
+
+        <div class="video-container">
+            <div id="youtube-player"></div>
+        </div>
+
+        <div class="completion-status">
+            <p id="completion-message">Loading video...</p>
+            <div id="progress-bar" class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+            <p id="percentage-text">0%</p>
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="js/scorm_runtime.js"></script>
+    <script src="js/youtube_player.js"></script>
+
+    <script>
+        // Configuration
+        var videoConfig = {
+            videotype: 'youtube',
+            videoid: '{{VIDEO_ID}}',
+            completiontype: '{{COMPLETION_TYPE}}',
+            completionpercentage: {{COMPLETION_PERCENTAGE}},
+            seekbar: '{{SEEKBAR}}',
+            autoplay: {{AUTOPLAY}} ? 1 : 0
+        };
+    </script>
+</body>
+</html>
+

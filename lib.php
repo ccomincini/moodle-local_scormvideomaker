@@ -8,18 +8,17 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 /**
  * Library functions for SCORM Video Maker.
  *
- * @package   local_scormvideomaker
+ * @package scormvideomaker
  * @copyright 2025 Carlo Comincini <carlo@comincini.it>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -30,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param navigation_node $navnode The navigation node to extend
  * @return void
  */
-function local_scormvideomaker_extend_navigation_admin_node(navigation_node $navnode): void {
+function scormvideomaker_extend_navigation_admin_node(navigation_node $navnode): void {
     global $CFG;
 
     $context = context_system::instance();
@@ -38,13 +37,12 @@ function local_scormvideomaker_extend_navigation_admin_node(navigation_node $nav
     if (has_capability('local/scormvideomaker:create', $context)) {
         $url = new moodle_url($CFG->wwwroot . '/local/scormvideomaker/index.php');
         $navnode->add(
-            get_string('createscorm', 'local_scormvideomaker'),
+            get_string('createscrorm', 'local_scormvideomaker'),
             $url,
             navigation_node::TYPE_SETTING,
             null,
             'local_scormvideomaker',
-            new pix_icon('i/settings', '')
+            new pix_icon('/settings', '')
         );
     }
 }
-

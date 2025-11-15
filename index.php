@@ -8,18 +8,17 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 /**
  * Main page for SCORM Video Maker.
  *
- * @package   local_scormvideomaker
+ * @package scormvideomaker
  * @copyright 2025 Carlo Comincini <carlo@comincini.it>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(__DIR__ . '/../../config.php');
@@ -31,8 +30,8 @@ require_capability('local/scormvideomaker:create', $context);
 
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/local/scormvideomaker/index.php'));
-$PAGE->set_title(get_string('createscorm', 'local_scormvideomaker'));
-$PAGE->set_heading(get_string('createscorm', 'local_scormvideomaker'));
+$PAGE->set_title(get_string('createscrorm', 'scormvideomaker'));
+$PAGE->set_heading(get_string('createscrorm', 'scormvideomaker'));
 
 // Create form.
 $mform = new local_scormvideomaker_create_scorm_form();
@@ -44,34 +43,29 @@ if ($mform->is_cancelled()) {
 if ($data = $mform->get_data()) {
     // Process the form data.
     require_once(__DIR__ . '/classes/scorm_creator.php');
-    $creator = new local_scormvideomaker\scorm_creator();
+    $creator = new scormvideomaker\scorm_creator();
     
     try {
         $result = $creator->create_scorm_activity($data);
         
         if ($result) {
             redirect(
-                new moodle_url('/course/view.php', ['id' => $data->course]),
-                get_string('success', 'local_scormvideomaker'),
+                new moodle_url('/course/view.php', ['id' => $data->courseid]),
+                get_string('success', 'scormvideomaker'),
                 null,
                 \core\output\notification::NOTIFY_SUCCESS
             );
-        } else {
-            throw new moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker');
         }
     } catch (Exception $e) {
-        $PAGE->set_title(get_string('error', 'local_scormvideomaker'));
-        $PAGE->set_heading(get_string('error', 'local_scormvideomaker'));
+        $PAGE->set_title(get_string('error', 'scormvideomaker'));
+        $PAGE->set_heading(get_string('error', 'scormvideomaker'));
         echo $OUTPUT->header();
-        echo $OUTPUT->notification($e->getMessage(), 'notifyerror');
+        echo $OUTPUT->notification($e->getMessage(), 'notifyproblem');
         echo $OUTPUT->footer();
         die();
     }
 }
 
-// Display the form.
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('createscorm', 'local_scormvideomaker'));
-$mform->display();
+echo $mform->render();
 echo $OUTPUT->footer();
-

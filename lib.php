@@ -29,20 +29,17 @@ defined('MOODLE_INTERNAL') || die();
  * @param navigation_node $navnode The navigation node to extend
  * @return void
  */
-function scormvideomaker_extend_navigation_admin_node(navigation_node $navnode): void {
+function local_scormvideomaker_extends_settings_navigation(settings_navigation $settingsnav, context $context) {
     global $CFG;
 
-    $context = context_system::instance();
-
     if (has_capability('local/scormvideomaker:create', $context)) {
-        $url = new moodle_url($CFG->wwwroot . '/local/scormvideomaker/index.php');
-        $navnode->add(
+        $url = new moodle_url('/local/scormvideomaker/index.php');
+        $settingsnav->add(
             get_string('createscrorm', 'local_scormvideomaker'),
             $url,
             navigation_node::TYPE_SETTING,
             null,
-            'local_scormvideomaker',
-            new pix_icon('/settings', '')
+            'local_scormvideomaker'
         );
     }
 }

@@ -1,0 +1,110 @@
+# Moodle and PHP Development
+/node_modules/
+/vendor/
+composer.lock
+package-lock.json
+
+# IDE and Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.classpath
+.c9/
+*.sublime-project
+*.sublime-workspace
+.netbeans/
+nbproject/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Temporary Files
+*.tmp
+*.temp
+*.log
+*.cache
+.cache/
+
+# Backup Files
+*.bak
+*.backup
+*~
+*.orig
+
+# Build and Distribution
+/dist/
+/build/
+*.tar.gz
+*.zip
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Test Coverage
+/coverage/
+.phpunit.result.cache
+/tests/coverage-report/
+
+# Moodle Specific
+/moodle/
+/moodledata/
+/temp/
+config.php
+db.php
+
+# Node/npm
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Lock files (optional - uncomment if you want to commit them)
+# composer.lock
+# package-lock.json
+
+# Private keys and secrets (IMPORTANT!)
+*.key
+*.pem
+secret.txt
+.credentials
+
+# macOS
+.AppleDouble
+.AppleDB
+.AppleDesktop
+
+# Windows
+$RECYCLE.BIN/
+ehthumbs.db
+
+# PHPStorm
+.idea/
+*.iml
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vagrant
+.vagrant/
+Vagrantfile.local
+
+# Docker
+docker-compose.override.yml
+
+# Development
+local_config.php
+dev_notes.txt
+testing.md

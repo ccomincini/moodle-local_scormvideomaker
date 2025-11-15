@@ -8,66 +8,62 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 /**
  * Admin settings for SCORM Video Maker.
  *
- * @package   local_scormvideomaker
+ * @package scormvideomaker
  * @copyright 2025 Carlo Comincini <carlo@comincini.it>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
     $settings = new admin_settingpage(
-        'local_scormvideomaker',
-        get_string('pluginname', 'local_scormvideomaker')
+        'scormvideomaker',
+        get_string('pluginname', 'scormvideomaker')
     );
-
     $ADMIN->add('localplugins', $settings);
 
     // Setting: Enable plugin.
     $settings->add(new admin_setting_configcheckbox(
-        'local_scormvideomaker/enabled',
-        get_string('setting_enabled', 'local_scormvideomaker'),
-        get_string('setting_enabled_desc', 'local_scormvideomaker'),
+        'scormvideomaker/enabled',
+        get_string('setting_enabled', 'scormvideomaker'),
+        get_string('setting_enabled_desc', 'scormvideomaker'),
         1
     ));
 
     // Setting: Default autoplay.
     $settings->add(new admin_setting_configcheckbox(
-        'local_scormvideomaker/default_autoplay',
-        get_string('setting_default_autoplay', 'local_scormvideomaker'),
-        get_string('setting_default_autoplay_desc', 'local_scormvideomaker'),
+        'scormvideomaker/default_autoplay',
+        get_string('setting_default_autoplay', 'scormvideomaker'),
+        get_string('setting_default_autoplay_desc', 'scormvideomaker'),
         0
     ));
 
     // Setting: Default completion type.
     $completiontype = [
-        'end'        => get_string('completion_end', 'local_scormvideomaker'),
-        'percentage' => get_string('completion_percentage', 'local_scormvideomaker'),
+        'end' => get_string('completion_end', 'scormvideomaker'),
+        'percentage' => get_string('completion_percentage', 'scormvideomaker'),
     ];
     $settings->add(new admin_setting_configselect(
-        'local_scormvideomaker/default_completion_type',
-        get_string('setting_default_completion_type', 'local_scormvideomaker'),
-        get_string('setting_default_completion_type_desc', 'local_scormvideomaker'),
+        'scormvideomaker/default_completion_type',
+        get_string('setting_default_completion_type', 'scormvideomaker'),
+        get_string('setting_default_completion_type_desc', 'scormvideomaker'),
         'end',
         $completiontype
     ));
 
     // Setting: Default completion percentage.
     $settings->add(new admin_setting_configtext(
-        'local_scormvideomaker/default_completion_percentage',
-        get_string('setting_default_completion_percentage', 'local_scormvideomaker'),
-        get_string('setting_default_completion_percentage_desc', 'local_scormvideomaker'),
+        'scormvideomaker/default_completion_percentage',
+        get_string('setting_default_completion_percentage', 'scormvideomaker'),
+        get_string('setting_default_completion_percentage_desc', 'scormvideomaker'),
         '80',
         PARAM_INT
     ));
 }
-

@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'scormvideomaker';
-$plugin->version   = 2025111501
+$plugin->version   = 2025111501;
 $plugin->release   = '1.0.0';
 $plugin->requires  = 2022041900; // Moodle 4.0+
 $plugin->maturity  = MATURITY_ALPHA;

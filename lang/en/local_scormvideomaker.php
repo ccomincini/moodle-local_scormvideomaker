@@ -132,4 +132,4 @@ $string['event_scorm_updated'] = 'SCORM video package updated';
 $string['event_scorm_updated_desc'] = 'User updated SCORM video package in course {courseid}';
 
 // Privacy.
-$string['privacy:metadata'] = 'The SCORM Video Maker plugin does not store any personal data. All tracking is managed by the standard SCORM activity module.'
+$string['privacy:metadata'] = 'The SCORM Video Maker plugin does not store any personal data. All tracking is managed by the standard SCORM activity module.';

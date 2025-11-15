@@ -130,4 +130,4 @@ $string['event_scorm_updated'] = 'Pacchetto video SCORM aggiornato';
 $string['event_scorm_updated_desc'] = 'L\'utente ha aggiornato un pacchetto video SCORM nel corso {courseid}';
 
 // Privacy.
-$string['privacy:metadata'] = 'Il plugin SCORM Video Maker non memorizza alcun dato personale. Tutti i tracking sono gestiti dal modulo attività SCORM standard.'
+$string['privacy:metadata'] = 'Il plugin SCORM Video Maker non memorizza alcun dato personale. Tutti i tracking sono gestiti dal modulo attività SCORM standard.';

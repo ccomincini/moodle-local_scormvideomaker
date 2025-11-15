@@ -17,18 +17,18 @@
 /**
  * SCORM Video Maker - Version metadata.
  *
- * @package   scormvideomaker
+ * @package   local_scormvideomaker
  * @copyright 2025 Carlo Comincini <carlo@comincini.it>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_scormvideomaker';
-$plugin->version   = 2025111501;
-$plugin->release   = '1.0.0';
+$plugin->version   = 2025111501; // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2022041900; // Moodle 4.0+
+$plugin->component = 'local_scormvideomaker'; // Full name of the plugin (used for diagnostics).
 $plugin->maturity  = MATURITY_ALPHA;
+$plugin->release   = '1.0.1 (Build: 2025111501)';
 $plugin->dependencies = [
     'mod_scorm' => 2022041900,
 ];

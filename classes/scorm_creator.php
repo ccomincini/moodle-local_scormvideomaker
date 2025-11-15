@@ -27,7 +27,7 @@
 namespace local_scormvideomaker;
 
 defined('MOODLE_INTERNAL') || die();
-
+require_once($CFG->dirroot . '/local/scormvideomaker/lib.php');
 require_once($CFG->dirroot . '/mod/scorm/lib.php');
 require_once($CFG->libdir . '/filelib.php');
 

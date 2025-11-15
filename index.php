@@ -16,7 +16,7 @@
 /**
  * Main page for SCORM Video Maker.
  *
- * @package scormvideomaker
+ * @package local_scormvideomaker
  * @copyright 2025 Carlo Comincini <carlo@comincini.it>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,8 +30,8 @@ require_capability('local/scormvideomaker:create', $context);
 
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/local/scormvideomaker/index.php'));
-$PAGE->set_title(get_string('createscrorm', 'scormvideomaker'));
-$PAGE->set_heading(get_string('createscrorm', 'scormvideomaker'));
+$PAGE->set_title(get_string('createscrorm', 'local_scormvideomaker'));
+$PAGE->set_heading(get_string('createscrorm', 'local_scormvideomaker'));
 
 // Create form.
 $mform = new local_scormvideomaker_create_scorm_form();
@@ -51,14 +51,14 @@ if ($data = $mform->get_data()) {
         if ($result) {
             redirect(
                 new moodle_url('/course/view.php', ['id' => $data->courseid]),
-                get_string('success', 'scormvideomaker'),
+                get_string('success', 'local_scormvideomaker'),
                 null,
                 \core\output\notification::NOTIFY_SUCCESS
             );
         }
     } catch (Exception $e) {
-        $PAGE->set_title(get_string('error', 'scormvideomaker'));
-        $PAGE->set_heading(get_string('error', 'scormvideomaker'));
+        $PAGE->set_title(get_string('error', 'local_scormvideomaker'));
+        $PAGE->set_heading(get_string('error', 'local_scormvideomaker'));
         echo $OUTPUT->header();
         echo $OUTPUT->notification($e->getMessage(), 'notifyproblem');
         echo $OUTPUT->footer();

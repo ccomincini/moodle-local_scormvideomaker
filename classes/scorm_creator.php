@@ -318,14 +318,14 @@ class scorm_creator {
         // Parse the SCORM package - this extracts and processes the content.
         mtrace('[upload_scorm_package] Starting SCORM package parsing...');
         
-        // Enable debugging for scorm_parse
-        $olddebugging = $CFG->debug;
-        $CFG->debug = DEBUG_DEVELOPER;
-        
+        // Capture any output from scorm_parse
+        ob_start();
         $parsesuccess = scorm_parse($scorm, false);
+        $parseoutput = ob_get_clean();
         
-        // Restore debug level
-        $CFG->debug = $olddebugging;
+        if ($parseoutput) {
+            mtrace('[upload_scorm_package DEBUG] Parser output: ' . trim($parseoutput));
+        }
         
         if ($parsesuccess) {
             mtrace('[upload_scorm_package] SCORM package parsed successfully');

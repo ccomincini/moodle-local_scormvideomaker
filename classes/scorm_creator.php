@@ -317,7 +317,17 @@ class scorm_creator {
         
         // Parse the SCORM package - this extracts and processes the content.
         mtrace('[upload_scorm_package] Starting SCORM package parsing...');
-        if (scorm_parse($scorm, false)) {
+        
+        // Enable debugging for scorm_parse
+        $olddebugging = $CFG->debug;
+        $CFG->debug = DEBUG_DEVELOPER;
+        
+        $parsesuccess = scorm_parse($scorm, false);
+        
+        // Restore debug level
+        $CFG->debug = $olddebugging;
+        
+        if ($parsesuccess) {
             mtrace('[upload_scorm_package] SCORM package parsed successfully');
             // Update the scorm record with parsed data.
             $DB->update_record('scorm', $scorm);
@@ -326,6 +336,7 @@ class scorm_creator {
         }
         
         mtrace('[upload_scorm_package ERROR] SCORM parsing failed');
+        mtrace('[upload_scorm_package ERROR] SCORM object after parse attempt: ' . json_encode($scorm));
         return false;
     }
 

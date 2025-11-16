@@ -45,9 +45,15 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         $mform->addElement('header', 'courseheader', get_string('form_course', 'local_scormvideomaker'));
 
         $courses = $this->get_available_courses();
-        $mform->addElement('select', 'course', get_string('form_course', 'local_scormvideomaker'), $courses);
-        $mform->addRule('course', get_string('required'), 'required', null, 'client');
-        $mform->addHelpButton('course', 'form_course', 'local_scormvideomaker');
+        $mform->addElement('select', 'courseid', get_string('form_course', 'local_scormvideomaker'), $courses);
+        $mform->addRule('courseid', get_string('required'), 'required', null, 'client');
+        $mform->addHelpButton('courseid', 'form_course', 'local_scormvideomaker');
+
+        // Section selection (optional).
+        $mform->addElement('text', 'section', get_string('form_section', 'local_scormvideomaker'), ['size' => 3]);
+        $mform->setType('section', PARAM_INT);
+        $mform->setDefault('section', 0);
+        $mform->addHelpButton('section', 'form_section', 'local_scormvideomaker');
 
         // Video configuration.
         $mform->addElement('header', 'videoheader', get_string('pluginname', 'local_scormvideomaker'));
@@ -109,89 +115,6 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         $mform->setDefault('autoplay', 0);
         $mform->addHelpButton('autoplay', 'form_autoplay', 'local_scormvideomaker');
 
-        // SCORM Settings Header.
-        $mform->addElement('header', 'scormheader', get_string('section_scorm_settings', 'local_scormvideomaker'));
-        $mform->setExpanded('scormheader', false);
-
-        // SCORM Version.
-        $scormversions = [
-            'SCORM_1.2' => get_string('scorm_version_12', 'local_scormvideomaker'),
-            'SCORM_2004' => get_string('scorm_version_2004', 'local_scormvideomaker'),
-        ];
-        $mform->addElement('select', 'scorm_version', get_string('scorm_version', 'local_scormvideomaker'), $scormversions);
-        $mform->setDefault('scorm_version', 'SCORM_1.2');
-
-        // Maximum grade.
-        $mform->addElement('text', 'scorm_maxgrade', get_string('scorm_maxgrade', 'local_scormvideomaker'), ['size' => 3]);
-        $mform->setType('scorm_maxgrade', PARAM_INT);
-        $mform->setDefault('scorm_maxgrade', 100);
-
-        // Grading method.
-        $grademethods = [
-            1 => get_string('scorm_grademethod_high', 'local_scormvideomaker'),
-            2 => get_string('scorm_grademethod_avg', 'local_scormvideomaker'),
-            3 => get_string('scorm_grademethod_sum', 'local_scormvideomaker'),
-        ];
-        $mform->addElement('select', 'scorm_grademethod', get_string('scorm_grademethod', 'local_scormvideomaker'), $grademethods);
-        $mform->setDefault('scorm_grademethod', 1);
-
-        // Maximum attempts.
-        $attemptoptions = [];
-        for ($i = 1; $i <= 10; $i++) {
-            $attemptoptions[$i] = $i;
-        }
-        $attemptoptions[0] = get_string('scorm_maxattempt_unlimited', 'local_scormvideomaker');
-        $mform->addElement('select', 'scorm_maxattempt', get_string('scorm_maxattempt', 'local_scormvideomaker'), $attemptoptions);
-        $mform->setDefault('scorm_maxattempt', 0);
-
-        // What grade to report.
-        $whatgradeoptions = [
-            0 => get_string('scorm_whatgrade_high', 'local_scormvideomaker'),
-            1 => get_string('scorm_whatgrade_first', 'local_scormvideomaker'),
-            2 => get_string('scorm_whatgrade_last', 'local_scormvideomaker'),
-            3 => get_string('scorm_whatgrade_avg', 'local_scormvideomaker'),
-        ];
-        $mform->addElement('select', 'scorm_whatgrade', get_string('scorm_whatgrade', 'local_scormvideomaker'), $whatgradeoptions);
-        $mform->setDefault('scorm_whatgrade', 0);
-
-        // Display course structure.
-        $mform->addElement('checkbox', 'scorm_displaycoursestructure', get_string('scorm_displaycoursestructure', 'local_scormvideomaker'));
-        $mform->setDefault('scorm_displaycoursestructure', 0);
-
-        // Skip view page.
-        $skipviewoptions = [
-            0 => get_string('scorm_skipview_never', 'local_scormvideomaker'),
-            1 => get_string('scorm_skipview_first', 'local_scormvideomaker'),
-            2 => get_string('scorm_skipview_always', 'local_scormvideomaker'),
-        ];
-        $mform->addElement('select', 'scorm_skipview', get_string('scorm_skipview', 'local_scormvideomaker'), $skipviewoptions);
-        $mform->setDefault('scorm_skipview', 2);
-
-        // Hide browse button.
-        $mform->addElement('checkbox', 'scorm_hidebrowse', get_string('scorm_hidebrowse', 'local_scormvideomaker'));
-        $mform->setDefault('scorm_hidebrowse', 1);
-
-        // Hide TOC.
-        $hidetococoptions = [
-            0 => get_string('scorm_hidetoc_never', 'local_scormvideomaker'),
-            1 => get_string('scorm_hidetoc_structure', 'local_scormvideomaker'),
-            3 => get_string('scorm_hidetoc_all', 'local_scormvideomaker'),
-        ];
-        $mform->addElement('select', 'scorm_hidetoc', get_string('scorm_hidetoc', 'local_scormvideomaker'), $hidetococoptions);
-        $mform->setDefault('scorm_hidetoc', 3);
-
-        // Show navigation bar.
-        $mform->addElement('checkbox', 'scorm_nav', get_string('scorm_nav', 'local_scormvideomaker'));
-        $mform->setDefault('scorm_nav', 1);
-
-        // Auto commit.
-        $mform->addElement('checkbox', 'scorm_auto', get_string('scorm_auto', 'local_scormvideomaker'));
-        $mform->setDefault('scorm_auto', 0);
-
-        // Visibility.
-        $mform->addElement('checkbox', 'visible', get_string('visible', 'moodle'));
-        $mform->setDefault('visible', 1);
-
         // Form buttons.
         $this->add_action_buttons(true, get_string('createscorm', 'local_scormvideomaker'));
     }
@@ -214,6 +137,11 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
             }
         }
 
+        // Validate section number.
+        if (isset($data['section']) && $data['section'] < 0) {
+            $errors['section'] = get_string('error_invalid_section', 'local_scormvideomaker');
+        }
+
         return $errors;
     }
 
@@ -223,10 +151,9 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
      * @return array Courses array
      */
     private function get_available_courses(): array {
-        global $USER, $DB;
+        global $USER;
 
         $courses = [];
-        $context = context_system::instance();
 
         // Get all courses where user has capability to add activities.
         $usercourses = enrol_get_users_courses($USER->id);
@@ -244,4 +171,3 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         return $courses;
     }
 }
-

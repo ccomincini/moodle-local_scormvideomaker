@@ -139,3 +139,8 @@ $string['redirecting_to_scorm_form'] = 'SCORM package created successfully! Redi
 $string['error_file_upload'] = 'Error uploading SCORM package to draft area';
 $string['scorm_package_loaded'] = 'SCORM package loaded!';
 $string['scorm_package_loaded_desc'] = 'The SCORM package has been automatically loaded. Configure the activity settings below and click "Save and display".';
+
+
+$string['form_section'] = 'Course section';
+$string['form_section_help'] = 'The section number where the SCORM activity will be added (0 for the first section, 1 for the second, etc.)';
+$string['error_invalid_section'] = 'Invalid section number';

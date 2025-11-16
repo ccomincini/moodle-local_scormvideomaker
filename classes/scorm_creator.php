@@ -337,6 +337,12 @@ class scorm_creator {
         
         mtrace('[upload_scorm_package ERROR] SCORM parsing failed');
         mtrace('[upload_scorm_package ERROR] SCORM object after parse attempt: ' . json_encode($scorm));
+        
+        // DEBUG: Copy failed ZIP to /tmp for inspection
+        $debugzip = '/tmp/scorm_debug_' . time() . '.zip';
+        copy($zipfile, $debugzip);
+        mtrace('[upload_scorm_package DEBUG] Failed ZIP copied to: ' . $debugzip);
+        
         return false;
     }
 

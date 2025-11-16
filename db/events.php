@@ -24,5 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$observers = [];
+$observers = [
+        // Add observers here if needed in the future.
+];
 

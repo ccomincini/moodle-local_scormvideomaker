@@ -133,3 +133,9 @@ $string['event_scorm_updated_desc'] = 'User updated SCORM video package in cours
 
 // Privacy.
 $string['privacy:metadata'] = 'The SCORM Video Maker plugin does not store any personal data. All tracking is managed by the standard SCORM activity module.';
+
+
+$string['redirecting_to_scorm_form'] = 'SCORM package created successfully! Redirecting to activity settings...';
+$string['error_file_upload'] = 'Error uploading SCORM package to draft area';
+$string['scorm_package_loaded'] = 'SCORM package loaded!';
+$string['scorm_package_loaded_desc'] = 'The SCORM package has been automatically loaded. Configure the activity settings below and click "Save and display".';

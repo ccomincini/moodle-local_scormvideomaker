@@ -131,3 +131,8 @@ $string['event_scorm_updated_desc'] = 'L\'utente ha aggiornato un pacchetto vide
 
 // Privacy.
 $string['privacy:metadata'] = 'Il plugin SCORM Video Maker non memorizza alcun dato personale. Tutti i tracking sono gestiti dal modulo attività SCORM standard.';
+
+$string['redirecting_to_scorm_form'] = 'Pacchetto SCORM creato con successo! Reindirizzamento alle impostazioni dell\'attività...';
+$string['error_file_upload'] = 'Errore nel caricamento del pacchetto SCORM nell\'area bozze';
+$string['scorm_package_loaded'] = 'Pacchetto SCORM caricato!';
+$string['scorm_package_loaded_desc'] = 'Il pacchetto SCORM è stato caricato automaticamente. Configura le impostazioni dell\'attività qui sotto e clicca su "Salva e visualizza".';

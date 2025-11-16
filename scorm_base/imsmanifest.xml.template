@@ -25,15 +25,6 @@
     <resources>
         <resource identifier="RES-1" type="webcontent" adlcp:scormtype="sco" href="index.html">
             <file href="index.html"/>
-            <file href="config.js"/>
-            <file href="css/style.css"/>
-            <file href="js/bridge.js"/>
-            <file href="js/main.js"/>
-            <file href="js/videoall.js"/>
-            <file href="js/videojs-http-streaming.js"/>
-            <file href="js/3rd/videojs/video.js"/>
-            <file href="js/3rd/videojs/video-js.css"/>
-            <file href="js/3rd/xapiwrapper.min.js"/>
         </resource>
     </resources>
 </manifest>

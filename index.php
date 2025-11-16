@@ -18,7 +18,7 @@
  * Main page for SCORM Video Maker.
  *
  * @package local_scormvideomaker
- * @copyright 2025 Carlo Comincini rlo@comincini.it.it>
+ * @copyright 2025 Carlo Comincini <carlo@comincini.it>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -38,78 +38,27 @@ $PAGE->set_heading(get_string('createscrorm', 'local_scormvideomaker'));
 $mform = new local_scormvideomaker_create_scorm_form();
 
 if ($mform->is_cancelled()) {
-    redirect(new moodle_url('/admin/settings.php', ['section' => 'localplugins']));
+    redirect(new moodle_url('/my/'));
 }
 
 if ($data = $mform->get_data()) {
-    // Generate SCORM package.
-    $generator = new \local_scormvideomaker\scorm_package_generator();
-    
+    // Create SCORM activity.
+    $creator = new \local_scormvideomaker\scorm_creator();
+
     try {
-        $zipfile = $generator->generate_scorm_package($data);
+        $scormid = $creator->create_scorm_activity($data);
         
-        if (!$zipfile || !file_exists($zipfile)) {
+        if ($scormid) {
+            redirect(
+                new moodle_url('/course/view.php', ['id' => $data->courseid]),
+                get_string('success', 'local_scormvideomaker'),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
+        } else {
             throw new moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker');
         }
-        
-        // Upload to draft area.
-        $draftitemid = file_get_unused_draft_itemid();
-        $fs = get_file_storage();
-        $usercontext = context_user::instance($USER->id);
-        
-        // Create file record for draft area.
-        $filerecord = [
-            'contextid' => $usercontext->id,
-            'component' => 'user',
-            'filearea'  => 'draft',
-            'itemid'    => $draftitemid,
-            'filepath'  => '/',
-            'filename'  => clean_filename($data->title . '_scorm.zip'),
-            'timecreated' => time(),
-            'timemodified' => time(),
-        ];
-        
-        // Store file in draft area.
-        $storedfile = $fs->create_file_from_pathname($filerecord, $zipfile);
-        
-        // Clean up temp file.
-        if (file_exists($zipfile)) {
-            unlink($zipfile);
-        }
-        
-        if (!$storedfile) {
-            throw new moodle_exception('error_file_upload', 'local_scormvideomaker');
-        }
-        
-        // Store data in session for the SCORM form to pick up.
-        $SESSION->local_scormvideomaker = (object)[
-            'draftitemid' => $draftitemid,
-            'name' => $data->title,
-            'intro' => $data->description ?? '',
-            'courseid' => $data->courseid,
-            'section' => $data->section ?? 0,
-        ];
-        
-        // Redirect to SCORM activity creation page.
-        $redirecturl = new moodle_url('/course/modedit.php', [
-            'add' => 'scorm',
-            'type' => '',
-            'course' => $data->courseid,
-            'section' => $data->section ?? 0,
-            'return' => 0,
-            'sr' => 0,
-        ]);
-        
-        redirect(
-            $redirecturl,
-            get_string('redirecting_to_scorm_form', 'local_scormvideomaker'),
-            null,
-            \core\output\notification::NOTIFY_SUCCESS
-        );
-        
     } catch (Exception $e) {
-        $PAGE->set_title(get_string('error'));
-        $PAGE->set_heading(get_string('error'));
         echo $OUTPUT->header();
         echo $OUTPUT->notification($e->getMessage(), 'notifyproblem');
         echo $OUTPUT->continue_button(new moodle_url('/local/scormvideomaker/index.php'));
@@ -122,3 +71,4 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('createscrorm', 'local_scormvideomaker'));
 $mform->display();
 echo $OUTPUT->footer();
+

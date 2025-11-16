@@ -112,6 +112,7 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
 
         // Autoplay option.
         $mform->addElement('checkbox', 'autoplay', get_string('form_autoplay', 'local_scormvideomaker'));
+        $mform->setType('autoplay', PARAM_BOOL);
         $mform->setDefault('autoplay', 0);
         $mform->addHelpButton('autoplay', 'form_autoplay', 'local_scormvideomaker');
 

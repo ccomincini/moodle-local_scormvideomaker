@@ -18,17 +18,19 @@
  * Library functions for SCORM Video Maker.
  *
  * @package local_scormvideomaker
- * @copyright 2025 Carlo Comincini rlo@lo@comincini.it>
+ * @copyright 2025 Carlo Comincini <carlo@comincini.it>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+
 /**
- * Extend navigation to add plugin link.
+ * Extend navigation (optional).
  *
  * @param global_navigation $navigation
  */
 function local_scormvideomaker_extend_navigation(global_navigation $navigation) {
-    // This function can be used to add custom navigation items if needed.
+    // Future navigation customizations can be added here.
 }
+

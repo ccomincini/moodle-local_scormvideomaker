@@ -15,8 +15,13 @@
     <organizations default="ORG-1">
         <organization identifier="ORG-1">
             <title>{{TITLE}}</title>
-            <item identifier="ITEM-1" identifierref="RES-1">
+            <item identifier="ITEM-1" identifierref="RES-1" isvisible="true">
                 <title>{{TITLE}}</title>
+                <adlcp:prerequisites type="aicc_script"></adlcp:prerequisites>
+                <adlcp:maxtimeallowed></adlcp:maxtimeallowed>
+                <adlcp:timelimitaction></adlcp:timelimitaction>
+                <adlcp:datafromlms></adlcp:datafromlms>
+                <adlcp:masteryscore></adlcp:masteryscore>
             </item>
         </organization>
     </organizations>
@@ -24,6 +29,11 @@
     <resources>
         <resource identifier="RES-1" type="webcontent" adlcp:scormtype="sco" href="index.html">
             <file href="index.html"/>
+            <dependency identifierref="COMMON_FILES"/>
+        </resource>
+        <resource identifier="COMMON_FILES" type="webcontent" adlcp:scormtype="asset">
+            <file href="config.js"/>
+            <file href="css/style.css"/>
         </resource>
     </resources>
 </manifest>

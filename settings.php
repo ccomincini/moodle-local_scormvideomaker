@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Admin settings for SCORM Video Maker.
  *
@@ -20,11 +21,22 @@
  * @copyright 2025 Carlo Comincini <carlo@comincini.it>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    $settings = new admin_settingpage(
+    // Add admin external page for creating SCORM videos.
+    $page = new admin_externalpage(
         'local_scormvideomaker',
+        get_string('createscrorm', 'local_scormvideomaker'),
+        new moodle_url('/local/scormvideomaker/index.php'),
+        'local/scormvideomaker:create'
+    );
+    $ADMIN->add('localplugins', $page);
+
+    // Settings page for plugin configuration.
+    $settings = new admin_settingpage(
+        'local_scormvideomaker_settings',
         get_string('pluginname', 'local_scormvideomaker')
     );
     $ADMIN->add('localplugins', $settings);

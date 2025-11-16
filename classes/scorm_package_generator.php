@@ -44,11 +44,17 @@ class scorm_package_generator {
     public function generate_scorm_package(object $formdata) {
         global $CFG;
 
+        mtrace('[SCORM Generator] Starting package generation');
+        mtrace('[SCORM Generator] Video type: ' . $formdata->videotype);
+
         // Get template path based on video type.
         $templatepath = $this->get_template_path($formdata->videotype);
+        mtrace('[SCORM Generator] Template path: ' . $templatepath);
 
         if (!is_dir($templatepath)) {
-            debugging("Template not found: {$templatepath}", DEBUG_DEVELOPER);
+            $error = "Template not found: {$templatepath}";
+            mtrace('[SCORM Generator ERROR] ' . $error);
+            debugging($error, DEBUG_DEVELOPER);
             return false;
         }
 
@@ -56,28 +62,38 @@ class scorm_package_generator {
         $tempdir = make_temp_directory('scormvideomaker');
         $workdir = $tempdir . DIRECTORY_SEPARATOR . uniqid('scorm_');
         mkdir($workdir);
+        mtrace('[SCORM Generator] Work directory created: ' . $workdir);
 
         try {
             // Copy template to work directory.
+            mtrace('[SCORM Generator] Copying template...');
             $this->copy_directory($templatepath, $workdir);
+            mtrace('[SCORM Generator] Template copied successfully');
 
             // Replace variables in files.
+            mtrace('[SCORM Generator] Replacing variables...');
             $this->replace_variables($workdir, $formdata);
+            mtrace('[SCORM Generator] Variables replaced');
 
             // Create ZIP file.
+            mtrace('[SCORM Generator] Creating ZIP file...');
             $zipfile = $this->create_zip($workdir);
+            mtrace('[SCORM Generator] ZIP file created: ' . $zipfile);
 
             // Clean up work directory.
             $this->remove_directory($workdir);
+            mtrace('[SCORM Generator] Work directory cleaned up');
 
             return $zipfile;
 
         } catch (\Exception $e) {
             // Clean up on error.
+            $error = "Error generating SCORM package: " . $e->getMessage();
+            mtrace('[SCORM Generator ERROR] ' . $error);
+            debugging($error . "\nStack: " . $e->getTraceAsString(), DEBUG_DEVELOPER);
             if (is_dir($workdir)) {
                 $this->remove_directory($workdir);
             }
-            debugging("Error generating SCORM package: " . $e->getMessage(), DEBUG_DEVELOPER);
             return false;
         }
     }

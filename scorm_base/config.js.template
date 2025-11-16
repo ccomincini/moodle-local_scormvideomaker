@@ -1,0 +1,26 @@
+// SCORM Video Player Configuration
+var videoall_config = {
+    // Video source
+    videoUrl: '{{VIDEO_URL}}',
+    videoType: '{{VIDEO_TYPE}}',
+    
+    // Player settings
+    autoplay: {{AUTOPLAY}},
+    
+    // Seekbar/Navigation mode
+    // Options: 'free', 'locked', 'backward'
+    navigationMode: '{{SEEKBAR}}',
+    
+    // Completion criteria
+    completionCriteria: {
+        type: '{{COMPLETION_TYPE}}', // 'end' or 'percentage'
+        value: {{COMPLETION_PERCENTAGE}} // percentage value if type is 'percentage'
+    },
+    
+    // SCORM tracking
+    trackingMode: 'scorm12',
+    
+    // Metadata
+    title: '{{TITLE}}',
+    description: '{{DESCRIPTION}}'
+};

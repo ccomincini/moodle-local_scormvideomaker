@@ -47,8 +47,8 @@ class scorm_package_generator {
         mtrace('[SCORM Generator] Starting package generation');
         mtrace('[SCORM Generator] Video type: ' . $formdata->videotype);
 
-        // Get template path based on video type.
-        $templatepath = $this->get_template_path($formdata->videotype);
+        // Use scorm_base directory as template
+        $templatepath = $CFG->dirroot . '/local/scormvideomaker/scorm_base';
         mtrace('[SCORM Generator] Template path: ' . $templatepath);
 
         if (!is_dir($templatepath)) {
@@ -98,24 +98,7 @@ class scorm_package_generator {
         }
     }
 
-    /**
-     * Get template path for video type.
-     *
-     * @param string $videotype The video type (vimeo, youtube, hls)
-     * @return string Template path
-     */
-    private function get_template_path(string $videotype): string {
-        global $CFG;
 
-        $validtypes = ['vimeo', 'youtube', 'hls'];
-        $videotype = strtolower($videotype);
-
-        if (!in_array($videotype, $validtypes)) {
-            $videotype = 'vimeo';
-        }
-
-        return $CFG->dirroot . '/local/scormvideomaker/scorm_templates/' . $videotype;
-    }
 
     /**
      * Copy directory recursively.
@@ -159,22 +142,68 @@ class scorm_package_generator {
         $handler = video_handler_factory::get_handler($formdata->videotype);
         $videoparams = $handler->process_video_url($formdata->videourl);
 
+        // Determine MIME type based on video type
+        $mimetypes = [
+            'vimeo' => 'video/mp4',
+            'youtube' => 'video/mp4',
+            'hls' => 'application/x-mpegURL'
+        ];
+        $mimetype = $mimetypes[$formdata->videotype] ?? 'video/mp4';
+
         // Prepare replacement values.
         $replacements = [
-            '{{TITLE}}' => htmlspecialchars($formdata->title),
-            '{{DESCRIPTION}}' => htmlspecialchars($formdata->description ?? ''),
-            '{{VIDEO_ID}}' => htmlspecialchars($videoparams['videoid']),
-            '{{VIDEO_URL}}' => htmlspecialchars($videoparams['videourl']),
+            '{{TITLE}}' => htmlspecialchars($formdata->title, ENT_QUOTES, 'UTF-8'),
+            '{{DESCRIPTION}}' => htmlspecialchars($formdata->description ?? '', ENT_QUOTES, 'UTF-8'),
+            '{{VIDEO_URL}}' => htmlspecialchars($videoparams['videourl'], ENT_QUOTES, 'UTF-8'),
             '{{VIDEO_TYPE}}' => strtoupper($formdata->videotype),
+            '{{VIDEO_MIME_TYPE}}' => $mimetype,
             '{{SEEKBAR}}' => $formdata->seekbar ?? 'locked',
             '{{COMPLETION_TYPE}}' => $formdata->completion_type ?? 'end',
             '{{COMPLETION_PERCENTAGE}}' => intval($formdata->completion_percentage ?? 100),
-            '{{AUTOPLAY}}' => $formdata->autoplay ?? 0,
+            '{{AUTOPLAY}}' => $formdata->autoplay ? 'true' : 'false',
             '{{TIMESTAMP}}' => time(),
         ];
 
-        // Process all files in work directory.
-        $this->process_directory_files($workdir, $replacements);
+        // Process template files first
+        $this->process_template_files($workdir, $replacements);
+    }
+
+    /**
+     * Process .template files and create final versions.
+     *
+     * @param string $workdir Working directory
+     * @param array $replacements Replacement values
+     * @return void
+     */
+    private function process_template_files(string $workdir, array $replacements): void {
+        $templatefiles = [
+            'index.html.template' => 'index.html',
+            'config.js.template' => 'config.js',
+            'imsmanifest.xml.template' => 'imsmanifest.xml'
+        ];
+
+        foreach ($templatefiles as $template => $output) {
+            $templatepath = $workdir . DIRECTORY_SEPARATOR . $template;
+            $outputpath = $workdir . DIRECTORY_SEPARATOR . $output;
+
+            if (!file_exists($templatepath)) {
+                mtrace('[SCORM Generator WARNING] Template file not found: ' . $template);
+                continue;
+            }
+
+            $content = file_get_contents($templatepath);
+            
+            // Replace all variables
+            foreach ($replacements as $search => $replace) {
+                $content = str_replace($search, $replace, $content);
+            }
+            
+            file_put_contents($outputpath, $content);
+            mtrace('[SCORM Generator] Processed template: ' . $template . ' -> ' . $output);
+            
+            // Remove template file
+            unlink($templatepath);
+        }
     }
 
     /**

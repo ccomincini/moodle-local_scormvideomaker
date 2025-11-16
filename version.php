@@ -24,11 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025111501; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2025111603; // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2022041900; // Moodle 4.0+
 $plugin->component = 'local_scormvideomaker'; // Full name of the plugin (used for diagnostics).
 $plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '1.0.1 (Build: 2025111501)';
+$plugin->release   = '1.0.3 (Build: 2025111603)';
 $plugin->dependencies = [
     'mod_scorm' => 2022041900,
 ];

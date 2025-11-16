@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+          xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 imscp_root1p1p2.xsd
+                              http://www.imsglobal.org/xsd/imsmd_v1p2 imsmd_rootv1p2p1.xsd
+                              http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd"
+          identifier="SCORM_VIDEO_{{TIMESTAMP}}"
+          version="1.0">
+    
+    <metadata>
+        <schema>ADL SCORM</schema>
+        <schemaversion>1.2</schemaversion>
+    </metadata>
+    
+    <organizations default="ORG-1">
+        <organization identifier="ORG-1">
+            <title>{{TITLE}}</title>
+            <item identifier="ITEM-1" identifierref="RES-1">
+                <title>{{TITLE}}</title>
+            </item>
+        </organization>
+    </organizations>
+    
+    <resources>
+        <resource identifier="RES-1" type="webcontent" adlcp:scormtype="sco" href="index.html">
+            <file href="index.html"/>
+            <file href="config.js"/>
+            <file href="css/style.css"/>
+            <file href="js/bridge.js"/>
+            <file href="js/main.js"/>
+            <file href="js/videoall.js"/>
+            <file href="js/videojs-http-streaming.js"/>
+            <file href="js/3rd/videojs/video.js"/>
+            <file href="js/3rd/videojs/video-js.css"/>
+            <file href="js/3rd/xapiwrapper.min.js"/>
+        </resource>
+    </resources>
+</manifest>

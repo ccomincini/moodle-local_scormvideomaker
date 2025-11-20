@@ -50,13 +50,17 @@ if ($data = $mform->get_data()) {
     try {
         $scormid = $creator->create_scorm_activity($data);
         
-        if ($scormid) {
-            // Store success message in session
-            \core\notification::success(get_string('success', 'local_scormvideomaker'));
+        iif ($scormid) {
+            $courseurl = new moodle_url('/course/view.php', ['id' => $data->courseid]);
             
-            // Simple redirect without message parameter
-            redirect(new moodle_url('/course/view.php', ['id' => $data->courseid]));
-            exit; // Assicurati che lo script termini
+            // Moodle's redirect with message
+            redirect(
+                $courseurl,
+                get_string('success', 'local_scormvideomaker'),
+                3, // Delay di 3 secondi per mostrare il messaggio
+                \core\output\notification::NOTIFY_SUCCESS
+            );
+            exit;
         } else {
             throw new moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker');
         }

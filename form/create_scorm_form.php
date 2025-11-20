@@ -133,10 +133,40 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
     }
 
     /**
+     * Called after the form data has been set.
+     * This method repopulates the course select with the submitted values
+     * to prevent validation errors on dynamically loaded options.
+     *
+     * @return void
+     */
+    public function definition_after_data() {
+        global $DB;
+        
+        $mform = $this->_form;
+        
+        // Ottieni i valori inviati
+        $categoryid = $mform->getSubmitValue('categoryid');
+        $courseid = $mform->getSubmitValue('courseid');
+        
+        // Se c'è una categoria, ripopola i corsi
+        if ($categoryid) {
+            $courses = self::get_courses_by_category($categoryid);
+            if (!empty($courses)) {
+                $courseelement = $mform->getElement('courseid');
+                
+                // Ricrea l'elemento con tutte le opzioni
+                $options = ['' => get_string('choosedots')];
+                $options = $options + $courses;
+                
+                // Aggiorna le opzioni dell'elemento
+                $courseelement->removeOptions();
+                $courseelement->loadArray($options);
+            }
+        }
+    }
+
+    /**
      * Validate form data.
-     * 
-     * IMPORTANTE: Non chiama parent::validation() per evitare il controllo automatico
-     * delle opzioni sui campi select popolati dinamicamente via AJAX.
      *
      * @param array $data Form data
      * @param array $files Uploaded files
@@ -145,8 +175,7 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
     public function validation($data, $files) {
         global $DB;
         
-        // NON chiamare parent::validation() - validazione completamente manuale
-        $errors = [];
+        $errors = parent::validation($data, $files);
 
         // Validate courseid is present and exists in database.
         if (empty($data['courseid'])) {

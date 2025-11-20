@@ -55,7 +55,6 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         // Course selection (will be populated based on category).
         $courses = ['' => get_string('choosedots')];
         $mform->addElement('select', 'courseid', get_string('form_course', 'local_scormvideomaker'), $courses);
-        $mform->addRule('courseid', get_string('required'), 'required', null, 'client');
         $mform->addHelpButton('courseid', 'form_course', 'local_scormvideomaker');
         // Disable options check for courseid since it's populated dynamically.
         $mform->setType('courseid', PARAM_INT);

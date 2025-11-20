@@ -41,6 +41,12 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                 return;
             }
 
+            // Log when course is selected.
+            courseSelect.on('change', function() {
+                var selectedCourseId = $(this).val();
+                console.log('SCORM Video Maker: Course selected:', selectedCourseId);
+            });
+
             // Handle category change.
             categorySelect.on('change', function() {
                 var categoryId = $(this).val();
@@ -83,10 +89,20 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                             text: course.name
                         }));
                     });
+                    console.log('SCORM Video Maker: Populated', courses.length, 'courses');
                 }).fail(function(error) {
                     console.error('SCORM Video Maker: AJAX error:', error);
                     Notification.exception(error);
                 });
+            });
+
+            // Before form submit, log the selected course.
+            $('form').on('submit', function() {
+                var selectedCourse = courseSelect.val();
+                console.log('SCORM Video Maker: Form submitting with courseid:', selectedCourse);
+                if (!selectedCourse || selectedCourse === '') {
+                    console.error('SCORM Video Maker: WARNING - No course selected!');
+                }
             });
         }
     };

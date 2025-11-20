@@ -56,7 +56,6 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         $courses = ['' => get_string('choosedots')];
         $mform->addElement('select', 'courseid', get_string('form_course', 'local_scormvideomaker'), $courses);
         $mform->addHelpButton('courseid', 'form_course', 'local_scormvideomaker');
-        // Disable options check for courseid since it's populated dynamically.
         $mform->setType('courseid', PARAM_INT);
 
         // Section selection (optional).
@@ -135,17 +134,25 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
 
     /**
      * Validate form data.
+     * 
+     * IMPORTANTE: Non chiama parent::validation() per evitare il controllo automatico
+     * delle opzioni sui campi select popolati dinamicamente via AJAX.
      *
      * @param array $data Form data
      * @param array $files Uploaded files
      * @return array Validation errors
      */
     public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
+        global $DB;
+        
+        // NON chiamare parent::validation() - validazione completamente manuale
+        $errors = [];
 
-        // Validate courseid is present.
+        // Validate courseid is present and exists in database.
         if (empty($data['courseid'])) {
             $errors['courseid'] = get_string('error_select_course', 'local_scormvideomaker');
+        } else if (!$DB->record_exists('course', ['id' => $data['courseid']])) {
+            $errors['courseid'] = get_string('error_invalid_course', 'local_scormvideomaker');
         }
 
         // Validate completion percentage.

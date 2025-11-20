@@ -46,7 +46,7 @@ class scorm_creator {
         global $DB, $USER, $CFG;
 
         mtrace('[SCORM Creator] Starting SCORM activity creation...');
-        debugging('SCORM Creator: Form data received - ' . json_encode($formdata), DEBUG_DEVELOPER);
+        // debugging('SCORM Creator: Form data received - ' . json_encode($formdata), DEBUG_DEVELOPER);
 
         // Validate course.
         try {
@@ -55,7 +55,7 @@ class scorm_creator {
         } catch (\Exception $e) {
             $error = 'Course validation failed: ' . $e->getMessage();
             mtrace('[SCORM Creator ERROR] ' . $error);
-            debugging($error, DEBUG_DEVELOPER);
+            // debugging($error, DEBUG_DEVELOPER);
             throw new \moodle_exception('error_invalid_course', 'local_scormvideomaker', '', null, $error);
         }
 
@@ -67,7 +67,7 @@ class scorm_creator {
         if (!$zipfile || !file_exists($zipfile)) {
             $error = 'SCORM package generation failed - no zip file created';
             mtrace('[SCORM Creator ERROR] ' . $error);
-            debugging($error, DEBUG_DEVELOPER);
+            // debugging($error, DEBUG_DEVELOPER);
             throw new \moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker', '', null, $error);
         }
 
@@ -91,13 +91,13 @@ class scorm_creator {
 
             $error = 'create_scorm_module returned false/null';
             mtrace('[SCORM Creator ERROR] ' . $error);
-            debugging($error, DEBUG_DEVELOPER);
+            // debugging($error, DEBUG_DEVELOPER);
             throw new \moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker', '', null, $error);
 
         } catch (\Exception $e) {
             $error = 'Exception during SCORM module creation: ' . $e->getMessage();
             mtrace('[SCORM Creator ERROR] ' . $error);
-            debugging('Stack trace: ' . $e->getTraceAsString(), DEBUG_DEVELOPER);
+            // debugging('Stack trace: ' . $e->getTraceAsString(), DEBUG_DEVELOPER);
             
             // Clean up temp file on error.
             if (file_exists($zipfile)) {

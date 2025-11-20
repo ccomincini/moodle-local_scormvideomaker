@@ -146,4 +146,3 @@ $string['form_section_help'] = 'Il numero della sezione in cui verrà aggiunta l
 $string['error_invalid_section'] = 'Numero di sezione non valido';
 $string['error_select_course'] = 'Seleziona un corso dalla lista';
 
-$string['choosedots'] = 'Seleziona un corso...';

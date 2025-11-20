@@ -54,7 +54,7 @@ class scorm_package_generator {
         if (!is_dir($templatepath)) {
             $error = "Template not found: {$templatepath}";
             mtrace('[SCORM Generator ERROR] ' . $error);
-            debugging($error, DEBUG_DEVELOPER);
+            // debugging($error, DEBUG_DEVELOPER);
             return false;
         }
 
@@ -90,7 +90,7 @@ class scorm_package_generator {
             // Clean up on error.
             $error = "Error generating SCORM package: " . $e->getMessage();
             mtrace('[SCORM Generator ERROR] ' . $error);
-            debugging($error . "\nStack: " . $e->getTraceAsString(), DEBUG_DEVELOPER);
+            // debugging($error . "\nStack: " . $e->getTraceAsString(), DEBUG_DEVELOPER);
             if (is_dir($workdir)) {
                 $this->remove_directory($workdir);
             }

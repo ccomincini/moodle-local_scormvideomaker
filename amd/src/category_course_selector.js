@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notification) {
+define(['jquery', 'core/ajax', 'core/notification', 'core/str'], function($, Ajax, Notification, Str) {
 
     return {
         /**
@@ -31,79 +31,90 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             var categorySelect = $('#id_categoryid');
             var courseSelect = $('#id_courseid');
 
-            // Debug logging.
-            console.log('SCORM Video Maker: Initializing category/course selector');
-            console.log('Category select found:', categorySelect.length);
-            console.log('Course select found:', courseSelect.length);
+            // Carica le stringhe tradotte
+            var strings = [
+                {key: 'choosecourse', component: 'local_scormvideomaker'},
+                {key: 'nocoursesincategory', component: 'local_scormvideomaker'}
+            ];
 
-            if (!categorySelect.length || !courseSelect.length) {
-                console.log('SCORM Video Maker: Missing select elements, aborting');
-                return;
-            }
+            Str.get_strings(strings).then(function(translatedStrings) {
+                var chooseCourseText = translatedStrings[0];
+                var noCoursesText = translatedStrings[1];
 
-            // Log when course is selected.
-            courseSelect.on('change', function() {
-                var selectedCourseId = $(this).val();
-                console.log('SCORM Video Maker: Course selected:', selectedCourseId);
-            });
+                console.log('SCORM Video Maker: Initializing category/course selector');
+                console.log('Category select found:', categorySelect.length);
+                console.log('Course select found:', courseSelect.length);
 
-            // Handle category change.
-            categorySelect.on('change', function() {
-                var categoryId = $(this).val();
-                console.log('SCORM Video Maker: Category changed to:', categoryId);
-                
-                // Clear current courses.
-                courseSelect.empty();
-                // MODIFICA QUI: usa stringa hardcoded invece di M.util.get_string
-                courseSelect.append($('<option>', {
-                    value: '',
-                    text: 'Select a course...'
-                }));
-
-                if (!categoryId) {
+                if (!categorySelect.length || !courseSelect.length) {
+                    console.log('SCORM Video Maker: Missing select elements, aborting');
                     return;
                 }
 
-                console.log('SCORM Video Maker: Calling AJAX to load courses...');
+                // Log when course is selected.
+                courseSelect.on('change', function() {
+                    var selectedCourseId = $(this).val();
+                    console.log('SCORM Video Maker: Course selected:', selectedCourseId);
+                });
 
-                // Load courses for selected category.
-                var promises = Ajax.call([{
-                    methodname: 'local_scormvideomaker_get_courses_by_category',
-                    args: {
-                        categoryid: parseInt(categoryId)
-                    }
-                }]);
+                // Handle category change.
+                categorySelect.on('change', function() {
+                    var categoryId = $(this).val();
+                    console.log('SCORM Video Maker: Category changed to:', categoryId);
+                    
+                    // Clear current courses.
+                    courseSelect.empty();
+                    courseSelect.append($('<option>', {
+                        value: '',
+                        text: chooseCourseText
+                    }));
 
-                promises[0].done(function(courses) {
-                    console.log('SCORM Video Maker: Received courses:', courses);
-                    if (!courses || courses.length === 0) {
-                        console.log('SCORM Video Maker: No courses found for this category');
-                        courseSelect.append($('<option>', {
-                            value: '',
-                            text: 'No courses in this category'
-                        }));
+                    if (!categoryId) {
                         return;
                     }
-                    $.each(courses, function(index, course) {
-                        courseSelect.append($('<option>', {
-                            value: course.id,
-                            text: course.name
-                        }));
-                    });
-                    console.log('SCORM Video Maker: Populated', courses.length, 'courses');
-                }).fail(function(error) {
-                    console.error('SCORM Video Maker: AJAX error:', error);
-                    Notification.exception(error);
-                });
-            });
 
-            // Before form submit, log the selected course.
-            $('form').on('submit', function() {
-                var selectedCourse = courseSelect.val();
-                console.log('SCORM Video Maker: Form submitting with courseid:', selectedCourse);
-                if (!selectedCourse || selectedCourse === '') {
-                    console.error('SCORM Video Maker: WARNING - No course selected!');
-                }
+                    console.log('SCORM Video Maker: Calling AJAX to load courses...');
+
+                    // Load courses for selected category.
+                    var promises = Ajax.call([{
+                        methodname: 'local_scormvideomaker_get_courses_by_category',
+                        args: {
+                            categoryid: parseInt(categoryId)
+                        }
+                    }]);
+
+                    promises[0].done(function(courses) {
+                        console.log('SCORM Video Maker: Received courses:', courses);
+                        if (!courses || courses.length === 0) {
+                            console.log('SCORM Video Maker: No courses found for this category');
+                            courseSelect.append($('<option>', {
+                                value: '',
+                                text: noCoursesText
+                            }));
+                            return;
+                        }
+                        $.each(courses, function(index, course) {
+                            courseSelect.append($('<option>', {
+                                value: course.id,
+                                text: course.name
+                            }));
+                        });
+                        console.log('SCORM Video Maker: Populated', courses.length, 'courses');
+                    }).fail(function(error) {
+                        console.error('SCORM Video Maker: AJAX error:', error);
+                        Notification.exception(error);
+                    });
+                });
+
+                // Before form submit, log the selected course.
+                $('form').on('submit', function() {
+                    var selectedCourse = courseSelect.val();
+                    console.log('SCORM Video Maker: Form submitting with courseid:', selectedCourse);
+                    if (!selectedCourse || selectedCourse === '') {
+                        console.error('SCORM Video Maker: WARNING - No course selected!');
+                    }
+                });
+            }).catch(function(error) {
+                console.error('SCORM Video Maker: Failed to load language strings', error);
             });
         }
     };

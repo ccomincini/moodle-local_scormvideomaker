@@ -146,6 +146,6 @@ $string['privacy:metadata'] = 'The SCORM Video Maker plugin does not store any p
 // UI messages.
 $string['hidden'] = 'hidden';
 $string['selectcategoryfirst'] = 'Select a category first';
-$string['redirecting_to_scorm_form'] = 'SCORM package created successfully! Redirecting to activity settings...';
-$string['scorm_package_loaded'] = 'SCORM package loaded!';
-$string['scorm_package_loaded_desc'] = 'The SCORM package has been automatically loaded. Configure the activity settings below and click "Save and display".';
+$string['choosecategory'] = 'Select a category...';
+$string['choosecourse'] = 'Select a course...';
+$string['nocoursesincategory'] = 'No courses in this category';

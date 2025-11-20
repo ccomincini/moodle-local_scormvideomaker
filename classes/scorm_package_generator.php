@@ -166,16 +166,31 @@ class scorm_package_generator {
         ];
         $mimetype = $mimetypes[$formdata->videotype] ?? 'video/mp4';
 
+        // Determine seek mode based on seekbar setting
+        $seekmodes = [
+            'free' => 'ANYWHERE',
+            'locked' => 'NONE',
+            'backward' => 'ONLY_BACKWARD'
+        ];
+        $seekmode = $seekmodes[$formdata->seekbar ?? 'locked'] ?? 'NONE';
+
+        // Determine completion settings
+        $completionby = ($formdata->completion_type ?? 'end') === 'end' ? 'END' : 'PERCENT_WATCHED';
+        $completionfraction = 1;
+        if ($completionby === 'PERCENT_WATCHED') {
+            $completionfraction = intval($formdata->completion_percentage ?? 100) / 100;
+        }
+
         // Prepare replacement values.
         $replacements = [
             '{{TITLE}}' => htmlspecialchars($formdata->title, ENT_QUOTES, 'UTF-8'),
             '{{DESCRIPTION}}' => htmlspecialchars($formdata->description ?? '', ENT_QUOTES, 'UTF-8'),
-            '{{VIDEO_URL}}' => htmlspecialchars($videoparams['videourl'], ENT_QUOTES, 'UTF-8'),
+            '{{VIDEO_URL}}' => $videoparams['videourl'],
             '{{VIDEO_TYPE}}' => strtoupper($formdata->videotype),
             '{{VIDEO_MIME_TYPE}}' => $mimetype,
-            '{{SEEKBAR}}' => $formdata->seekbar ?? 'locked',
-            '{{COMPLETION_TYPE}}' => $formdata->completion_type ?? 'end',
-            '{{COMPLETION_PERCENTAGE}}' => intval($formdata->completion_percentage ?? 100),
+            '{{SEEK_MODE_INCOMPLETE}}' => $seekmode,
+            '{{COMPLETION_BY}}' => $completionby,
+            '{{COMPLETION_FRACTION}}' => $completionfraction,
             '{{AUTOPLAY}}' => !empty($formdata->autoplay) ? 'true' : 'false',
             '{{TIMESTAMP}}' => time(),
         ];

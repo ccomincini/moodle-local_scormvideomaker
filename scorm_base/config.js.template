@@ -1,26 +1,21 @@
-// SCORM Video Player Configuration
 var videoall_config = {
-    // Video source
-    videoUrl: '{{VIDEO_URL}}',
-    videoType: '{{VIDEO_TYPE}}',
-    
-    // Player settings
+    trackingMode: "scorm12",
+    playerType: "videojs",
+    url: "{{VIDEO_URL}}",
+    width: "100%",
+    height: "100%", 
     autoplay: {{AUTOPLAY}},
-    
-    // Seekbar/Navigation mode
-    // Options: 'free', 'locked', 'backward'
-    navigationMode: '{{SEEKBAR}}',
-    
-    // Completion criteria
-    completionCriteria: {
-        type: '{{COMPLETION_TYPE}}', // 'end' or 'percentage'
-        value: {{COMPLETION_PERCENTAGE}} // percentage value if type is 'percentage'
+    seekModeIncomplete: "{{SEEK_MODE_INCOMPLETE}}", // NONE, ANYWHERE, ONLY_BACKWARD
+    seekModeCompleted: "ANYWHERE", // NONE, ANYWHERE, ONLY_BACKWARD
+    bookmarkQuestion: "Would you like to return to your bookmark?",
+    bookmarkForceResume: true,
+    completionBy: "{{COMPLETION_BY}}", // END, PERCENT_WATCHED
+    completionFraction: {{COMPLETION_FRACTION}},
+    completeFn: function() {
+        // console.log("Perform custom completion activities here.");
     },
-    
-    // SCORM tracking
-    trackingMode: 'scorm12',
-    
-    // Metadata
-    title: '{{TITLE}}',
-    description: '{{DESCRIPTION}}'
+    tracks: [
+        
+    ],
+    poster: ""
 };

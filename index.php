@@ -50,7 +50,7 @@ if ($data = $mform->get_data()) {
     try {
         $scormid = $creator->create_scorm_activity($data);
         
-        iif ($scormid) {
+        if ($scormid) {
             $courseurl = new moodle_url('/course/view.php', ['id' => $data->courseid]);
             
             // Moodle's redirect with message

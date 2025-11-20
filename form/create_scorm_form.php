@@ -55,7 +55,7 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         // Course selection (will be populated based on category).
         // Use simple text instead of get_string() in array
         $mform->addElement('select', 'courseid', get_string('form_course', 'local_scormvideomaker'), 
-            ['' => get_string('choosedots', 'moodle')]);
+            ['' => 'Select a course...']);
         $mform->addHelpButton('courseid', 'form_course', 'local_scormvideomaker');
         $mform->setType('courseid', PARAM_INT);
 
@@ -156,8 +156,8 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
                 
                 // Ricrea l'elemento con tutte le opzioni
                 // IMPORTANTE: usa array semplice, non get_string() qui
-                $options = ['' => get_string('choosedots', 'moodle')] + $courses;
-                
+                $options = ['' => 'Select a course...'] + $courses;
+
                 // Aggiorna le opzioni dell'elemento
                 $courseelement->removeOptions();
                 $courseelement->loadArray($options);
@@ -209,7 +209,7 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         global $DB;
 
         // Start with empty option - chiamata get_string() QUI funziona
-        $categories = ['' => get_string('choosedots', 'moodle')];
+        $categories = ['' => 'Select a category...'];
 
         // Get all categories.
         $allcategories = $DB->get_records('course_categories', null, 'name ASC', 'id, name, parent, path');

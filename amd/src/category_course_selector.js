@@ -54,9 +54,10 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                 
                 // Clear current courses.
                 courseSelect.empty();
+                // MODIFICA QUI: usa stringa hardcoded invece di M.util.get_string
                 courseSelect.append($('<option>', {
                     value: '',
-                    text: M.util.get_string('choosedots', 'moodle')
+                    text: 'Select a course...'
                 }));
 
                 if (!categoryId) {

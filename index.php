@@ -42,6 +42,11 @@ if ($mform->is_cancelled()) {
 }
 
 if ($data = $mform->get_data()) {
+    // Debug
+    error_log("=== SCORM VIDEO MAKER DEBUG ===");
+    error_log("Form data received, starting creation...");
+    error_log("Course ID: " . $data->courseid);
+    
     // Create SCORM activity.
     $creator = new \local_scormvideomaker\scorm_creator();
 

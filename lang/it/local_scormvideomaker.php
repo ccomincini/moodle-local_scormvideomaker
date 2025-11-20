@@ -136,6 +136,7 @@ $string['event_scorm_updated_desc'] = 'L\'utente ha aggiornato un pacchetto vide
 // Privacy.
 $string['privacy:metadata'] = 'Il plugin SCORM Video Maker non memorizza alcun dato personale. Tutti i tracking sono gestiti dal modulo attività SCORM standard.';
 
+// UI messages.
 $string['redirecting_to_scorm_form'] = 'Pacchetto SCORM creato con successo! Reindirizzamento alle impostazioni dell\'attività...';
 $string['error_file_upload'] = 'Errore nel caricamento del pacchetto SCORM nell\'area bozze';
 $string['scorm_package_loaded'] = 'Pacchetto SCORM caricato!';
@@ -145,3 +146,9 @@ $string['form_section'] = 'Sezione corso';
 $string['form_section_help'] = 'Il numero della sezione in cui verrà aggiunta l\'attività SCORM (0 per la prima sezione, 1 per la seconda, ecc.)';
 $string['error_invalid_section'] = 'Numero di sezione non valido';
 $string['error_select_course'] = 'Seleziona un corso dalla lista';
+
+$string['hidden'] = 'nascosto';
+$string['selectcategoryfirst'] = 'Seleziona prima una categoria';
+$string['choosecategory'] = 'Scegli una categoria...';
+$string['choosecourse'] = 'Scegli un corso...';
+$string['nocoursesincategory'] = 'Nessun corso in questa categoria';

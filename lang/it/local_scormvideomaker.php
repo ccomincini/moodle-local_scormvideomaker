@@ -41,8 +41,12 @@ $string['setting_default_completion_percentage'] = 'Percentuale completamento pr
 $string['setting_default_completion_percentage_desc'] = 'Percentuale predefinita di video da guardare prima di contrassegnarlo come completato (0-100)';
 
 // Form labels - Video Configuration.
+$string['form_category'] = 'Categoria';
+$string['form_category_help'] = 'Seleziona la categoria per filtrare i corsi disponibili';
 $string['form_course'] = 'Corso';
 $string['form_course_help'] = 'Seleziona il corso in cui verrà creata l\'attività SCORM';
+$string['hidden'] = 'nascosto';
+$string['selectcategoryfirst'] = 'Seleziona prima una categoria';
 $string['form_title'] = 'Titolo attività';
 $string['form_title_help'] = 'Inserisci il titolo dell\'attività SCORM';
 $string['form_description'] = 'Descrizione';

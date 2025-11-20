@@ -39,12 +39,21 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
      * @return void
      */
     public function definition() {
+        global $PAGE;
+        
         $mform = $this->_form;
 
         // Course selection.
         $mform->addElement('header', 'courseheader', get_string('form_course', 'local_scormvideomaker'));
 
-        $courses = $this->get_available_courses();
+        // Category selection.
+        $categories = $this->get_available_categories();
+        $mform->addElement('select', 'categoryid', get_string('form_category', 'local_scormvideomaker'), $categories);
+        $mform->addRule('categoryid', get_string('required'), 'required', null, 'client');
+        $mform->addHelpButton('categoryid', 'form_category', 'local_scormvideomaker');
+
+        // Course selection (will be populated based on category).
+        $courses = ['' => get_string('choosedots')];
         $mform->addElement('select', 'courseid', get_string('form_course', 'local_scormvideomaker'), $courses);
         $mform->addRule('courseid', get_string('required'), 'required', null, 'client');
         $mform->addHelpButton('courseid', 'form_course', 'local_scormvideomaker');
@@ -54,6 +63,9 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         $mform->setType('section', PARAM_INT);
         $mform->setDefault('section', 0);
         $mform->addHelpButton('section', 'form_section', 'local_scormvideomaker');
+
+        // Add JavaScript to handle category change.
+        $PAGE->requires->js_call_amd('local_scormvideomaker/category_course_selector', 'init');
 
         // Video configuration.
         $mform->addElement('header', 'videoheader', get_string('pluginname', 'local_scormvideomaker'));
@@ -147,7 +159,66 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
     }
 
     /**
+     * Get available categories.
+     *
+     * @return array Categories array
+     */
+    private function get_available_categories(): array {
+        global $DB;
+
+        $categories = ['' => get_string('choosedots')];
+
+        // Get all categories.
+        $allcategories = $DB->get_records('course_categories', null, 'name ASC', 'id, name, parent, path');
+        
+        // Build hierarchical list with indentation.
+        foreach ($allcategories as $category) {
+            // Calculate depth for indentation.
+            $depth = substr_count($category->path, '/');
+            $indent = str_repeat('&nbsp;&nbsp;', $depth - 1);
+            $categories[$category->id] = $indent . $category->name;
+        }
+
+        return $categories;
+    }
+
+    /**
+     * Get available courses for a category (includes hidden courses).
+     *
+     * @param int $categoryid Category ID
+     * @return array Courses array
+     */
+    public static function get_courses_by_category(int $categoryid): array {
+        global $DB;
+
+        $courses = [];
+
+        if ($categoryid <= 0) {
+            return $courses;
+        }
+
+        // Get all courses in this category (including hidden).
+        $sql = "SELECT id, fullname, shortname, visible 
+                FROM {course} 
+                WHERE category = :categoryid 
+                ORDER BY fullname ASC";
+        
+        $courselist = $DB->get_records_sql($sql, ['categoryid' => $categoryid]);
+
+        foreach ($courselist as $course) {
+            $name = $course->fullname;
+            if (!$course->visible) {
+                $name .= ' (' . get_string('hidden', 'local_scormvideomaker') . ')';
+            }
+            $courses[$course->id] = $name;
+        }
+
+        return $courses;
+    }
+
+    /**
      * Get available courses for current user.
+     * @deprecated Use get_courses_by_category instead
      *
      * @return array Courses array
      */

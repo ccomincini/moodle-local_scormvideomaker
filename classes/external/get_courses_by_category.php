@@ -66,10 +66,11 @@ class get_courses_by_category extends external_api {
             'categoryid' => $categoryid,
         ]);
 
-        // Check capability.
-        $context = \context_system::instance();
+        // Check capability - use course category context instead of system.
+        $context = \context_coursecat::instance($params['categoryid']);
         self::validate_context($context);
-        require_capability('local/scormvideomaker:create', $context);
+        // Check if user can view courses in this category.
+        require_capability('moodle/category:viewcourselist', $context);
 
         $courses = [];
 

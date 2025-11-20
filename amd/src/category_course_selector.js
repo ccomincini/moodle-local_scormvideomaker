@@ -31,13 +31,20 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             var categorySelect = $('#id_categoryid');
             var courseSelect = $('#id_courseid');
 
+            // Debug logging.
+            console.log('SCORM Video Maker: Initializing category/course selector');
+            console.log('Category select found:', categorySelect.length);
+            console.log('Course select found:', courseSelect.length);
+
             if (!categorySelect.length || !courseSelect.length) {
+                console.log('SCORM Video Maker: Missing select elements, aborting');
                 return;
             }
 
             // Handle category change.
             categorySelect.on('change', function() {
                 var categoryId = $(this).val();
+                console.log('SCORM Video Maker: Category changed to:', categoryId);
                 
                 // Clear current courses.
                 courseSelect.empty();
@@ -50,6 +57,8 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                     return;
                 }
 
+                console.log('SCORM Video Maker: Calling AJAX to load courses...');
+
                 // Load courses for selected category.
                 var promises = Ajax.call([{
                     methodname: 'local_scormvideomaker_get_courses_by_category',
@@ -59,6 +68,15 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                 }]);
 
                 promises[0].done(function(courses) {
+                    console.log('SCORM Video Maker: Received courses:', courses);
+                    if (!courses || courses.length === 0) {
+                        console.log('SCORM Video Maker: No courses found for this category');
+                        courseSelect.append($('<option>', {
+                            value: '',
+                            text: 'No courses in this category'
+                        }));
+                        return;
+                    }
                     $.each(courses, function(index, course) {
                         courseSelect.append($('<option>', {
                             value: course.id,
@@ -66,6 +84,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                         }));
                     });
                 }).fail(function(error) {
+                    console.error('SCORM Video Maker: AJAX error:', error);
                     Notification.exception(error);
                 });
             });

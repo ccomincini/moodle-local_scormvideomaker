@@ -160,7 +160,7 @@ class scorm_package_generator {
             '{{SEEKBAR}}' => $formdata->seekbar ?? 'locked',
             '{{COMPLETION_TYPE}}' => $formdata->completion_type ?? 'end',
             '{{COMPLETION_PERCENTAGE}}' => intval($formdata->completion_percentage ?? 100),
-            '{{AUTOPLAY}}' => $formdata->autoplay ? 'true' : 'false',
+            '{{AUTOPLAY}}' => !empty($formdata->autoplay) ? 'true' : 'false',
             '{{TIMESTAMP}}' => time(),
         ];
 

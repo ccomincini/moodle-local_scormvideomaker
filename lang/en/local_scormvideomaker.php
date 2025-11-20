@@ -149,3 +149,5 @@ $string['form_section'] = 'Course section';
 $string['form_section_help'] = 'The section number where the SCORM activity will be added (0 for the first section, 1 for the second, etc.)';
 $string['error_invalid_section'] = 'Invalid section number';
 $string['error_select_course'] = 'Please select a course from the list';
+
+$string['choosedots'] = 'Select a course...';

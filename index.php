@@ -49,19 +49,20 @@ if ($data = $mform->get_data()) {
         $scormid = $creator->create_scorm_activity($data);
         
         if ($scormid) {
-            // Use redirect without notification to avoid session issues
-            // The success will be shown on the course page
+            // Redirect to course page with success message
+            $courseurl = new moodle_url('/course/view.php', ['id' => $data->courseid]);
             redirect(
-                new moodle_url('/course/view.php', ['id' => $data->courseid]),
+                $courseurl,
                 get_string('success', 'local_scormvideomaker'),
-                0, // No delay
+                null,
                 \core\output\notification::NOTIFY_SUCCESS
             );
+            // Script termina qui - non viene mai eseguito altro codice dopo redirect()
         } else {
             throw new moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker');
         }
     } catch (Exception $e) {
-        // Only output header/footer on error
+        // Output header only on error
         echo $OUTPUT->header();
         echo $OUTPUT->notification($e->getMessage(), 'notifyproblem');
         echo $OUTPUT->continue_button(new moodle_url('/local/scormvideomaker/index.php'));
@@ -70,8 +71,8 @@ if ($data = $mform->get_data()) {
     }
 }
 
+// Show the form (only if not submitted or on validation error)
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('createscrorm', 'local_scormvideomaker'));
 $mform->display();
 echo $OUTPUT->footer();
-

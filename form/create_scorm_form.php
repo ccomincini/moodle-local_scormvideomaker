@@ -53,8 +53,9 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         $mform->addHelpButton('categoryid', 'form_category', 'local_scormvideomaker');
 
         // Course selection (will be populated based on category).
-        $courses = ['' => get_string('choosedots', 'moodle')];
-        $mform->addElement('select', 'courseid', get_string('form_course', 'local_scormvideomaker'), $courses);
+        // Use simple text instead of get_string() in array
+        $mform->addElement('select', 'courseid', get_string('form_course', 'local_scormvideomaker'), 
+            ['' => get_string('choosedots', 'moodle')]);
         $mform->addHelpButton('courseid', 'form_course', 'local_scormvideomaker');
         $mform->setType('courseid', PARAM_INT);
 
@@ -146,7 +147,6 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         
         // Ottieni i valori inviati
         $categoryid = $mform->getSubmitValue('categoryid');
-        $courseid = $mform->getSubmitValue('courseid');
         
         // Se c'è una categoria, ripopola i corsi
         if ($categoryid) {
@@ -155,8 +155,8 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
                 $courseelement = $mform->getElement('courseid');
                 
                 // Ricrea l'elemento con tutte le opzioni
-                $options = ['' => get_string('choosedots')];
-                $options = $options + $courses;
+                // IMPORTANTE: usa array semplice, non get_string() qui
+                $options = ['' => get_string('choosedots', 'moodle')] + $courses;
                 
                 // Aggiorna le opzioni dell'elemento
                 $courseelement->removeOptions();
@@ -208,7 +208,8 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
     private function get_available_categories(): array {
         global $DB;
 
-        $categories = ['' => get_string('choosedots')];
+        // Start with empty option - chiamata get_string() QUI funziona
+        $categories = ['' => get_string('choosedots', 'moodle')];
 
         // Get all categories.
         $allcategories = $DB->get_records('course_categories', null, 'name ASC', 'id, name, parent, path');
@@ -217,7 +218,7 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         foreach ($allcategories as $category) {
             // Calculate depth for indentation.
             $depth = substr_count($category->path, '/');
-            $indent = str_repeat('&nbsp;&nbsp;', $depth - 1);
+            $indent = str_repeat('  ', $depth - 1); // Use spaces, not &nbsp;
             $categories[$category->id] = $indent . $category->name;
         }
 
@@ -228,7 +229,7 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
      * Get available courses for a category (includes hidden courses).
      *
      * @param int $categoryid Category ID
-     * @return array Courses array
+     * @return array Courses array indexed by course ID
      */
     public static function get_courses_by_category(int $categoryid): array {
         global $DB;
@@ -254,33 +255,6 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
             }
             $courses[$course->id] = $name;
         }
-
-        return $courses;
-    }
-
-    /**
-     * Get available courses for current user.
-     * @deprecated Use get_courses_by_category instead
-     *
-     * @return array Courses array
-     */
-    private function get_available_courses(): array {
-        global $USER;
-
-        $courses = [];
-
-        // Get all courses where user has capability to add activities.
-        $usercourses = enrol_get_users_courses($USER->id);
-
-        foreach ($usercourses as $course) {
-            $coursecontext = context_course::instance($course->id);
-            if (has_capability('moodle/course:manageactivities', $coursecontext)) {
-                $courses[$course->id] = $course->fullname;
-            }
-        }
-
-        // Sort by name.
-        asort($courses);
 
         return $courses;
     }

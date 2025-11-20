@@ -101,7 +101,7 @@ class scorm_package_generator {
 
 
     /**
-     * Copy directory recursively.
+     * Copy directory recursively, excluding unwanted files.
      *
      * @param string $src Source directory
      * @param string $dst Destination directory
@@ -114,8 +114,24 @@ class scorm_package_generator {
             mkdir($dst);
         }
 
+        // Files to exclude from the package
+        $excludefiles = ['.DS_Store', 'README.md', '.gitkeep', '.git', 'Thumbs.db'];
+        // Extensions to exclude
+        $excludeext = ['old', 'map', 'xsd'];
+
         while (false !== ($file = readdir($dir))) {
             if ($file !== '.' && $file !== '..') {
+                // Skip excluded files
+                if (in_array($file, $excludefiles)) {
+                    continue;
+                }
+                
+                // Skip files with excluded extensions
+                $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+                if (in_array($ext, $excludeext)) {
+                    continue;
+                }
+                
                 $srcfile = $src . DIRECTORY_SEPARATOR . $file;
                 $dstfile = $dst . DIRECTORY_SEPARATOR . $file;
 

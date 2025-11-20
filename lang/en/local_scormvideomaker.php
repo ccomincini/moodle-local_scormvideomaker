@@ -42,13 +42,15 @@ $string['setting_default_completion_type_desc'] = 'Select how videos should be m
 $string['setting_default_completion_percentage'] = 'Default Completion Percentage';
 $string['setting_default_completion_percentage_desc'] = 'Default percentage of video to watch before marking as complete (0-100)';
 
-// Form labels - Video Configuration.
+// Form labels - Course selection.
 $string['form_category'] = 'Category';
 $string['form_category_help'] = 'Select the category to filter available courses';
 $string['form_course'] = 'Course';
 $string['form_course_help'] = 'Select the course where the SCORM activity will be created';
-$string['hidden'] = 'hidden';
-$string['selectcategoryfirst'] = 'Select a category first';
+$string['form_section'] = 'Course section';
+$string['form_section_help'] = 'The section number where the SCORM activity will be added (0 for the first section, 1 for the second, etc.)';
+
+// Form labels - Video Configuration.
 $string['form_title'] = 'Activity Title';
 $string['form_title_help'] = 'Enter the title for the SCORM activity';
 $string['form_description'] = 'Description';
@@ -121,9 +123,12 @@ $string['success'] = 'SCORM package created successfully! The activity has been 
 $string['error'] = 'Error creating SCORM package';
 $string['error_invalid_video_url'] = 'Invalid video URL or code format';
 $string['error_invalid_course'] = 'Invalid course selected';
+$string['error_select_course'] = 'Please select a course from the list';
 $string['error_course_not_found'] = 'Course not found or you do not have permission to access it';
 $string['error_scorm_creation_failed'] = 'Failed to create SCORM activity in the course';
 $string['error_invalid_completion_percentage'] = 'Completion percentage must be between 0 and 100';
+$string['error_invalid_section'] = 'Invalid section number';
+$string['error_file_upload'] = 'Error uploading SCORM package to draft area';
 
 // Permissions.
 $string['scormvideomaker:create'] = 'Create SCORM video packages';
@@ -131,23 +136,16 @@ $string['scormvideomaker:manage'] = 'Manage SCORM video packages';
 
 // Events.
 $string['event_scorm_created'] = 'SCORM video package created';
-$string['event_scorm_created_desc'] = 'User created a new SCORM video package in course {courseid}';
+$string['event_scorm_created_desc'] = 'User created a new SCORM video package in course {$a}';
 $string['event_scorm_updated'] = 'SCORM video package updated';
-$string['event_scorm_updated_desc'] = 'User updated SCORM video package in course {courseid}';
+$string['event_scorm_updated_desc'] = 'User updated SCORM video package in course {$a}';
 
 // Privacy.
 $string['privacy:metadata'] = 'The SCORM Video Maker plugin does not store any personal data. All tracking is managed by the standard SCORM activity module.';
 
-
+// UI messages.
+$string['hidden'] = 'hidden';
+$string['selectcategoryfirst'] = 'Select a category first';
 $string['redirecting_to_scorm_form'] = 'SCORM package created successfully! Redirecting to activity settings...';
-$string['error_file_upload'] = 'Error uploading SCORM package to draft area';
 $string['scorm_package_loaded'] = 'SCORM package loaded!';
 $string['scorm_package_loaded_desc'] = 'The SCORM package has been automatically loaded. Configure the activity settings below and click "Save and display".';
-
-
-$string['form_section'] = 'Course section';
-$string['form_section_help'] = 'The section number where the SCORM activity will be added (0 for the first section, 1 for the second, etc.)';
-$string['error_invalid_section'] = 'Invalid section number';
-$string['error_select_course'] = 'Please select a course from the list';
-
-$string['choosedots'] = 'Select a course...';

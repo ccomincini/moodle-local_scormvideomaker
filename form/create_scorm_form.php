@@ -53,7 +53,7 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         $mform->addHelpButton('categoryid', 'form_category', 'local_scormvideomaker');
 
         // Course selection (will be populated based on category).
-        $courses = ['' => get_string('choosedots')];
+        $courses = ['' => get_string('choosedots', 'moodle')];
         $mform->addElement('select', 'courseid', get_string('form_course', 'local_scormvideomaker'), $courses);
         $mform->addHelpButton('courseid', 'form_course', 'local_scormvideomaker');
         $mform->setType('courseid', PARAM_INT);

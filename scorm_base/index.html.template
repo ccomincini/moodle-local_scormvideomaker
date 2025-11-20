@@ -8,22 +8,17 @@
     <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
-    <div class="video-container">
-        <h1>{{TITLE}}</h1>
-        <div class="description">{{DESCRIPTION}}</div>
-        
-        <video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" width="100%" height="auto">
-            <source src="{{VIDEO_URL}}" type="{{VIDEO_MIME_TYPE}}">
-            <p class="vjs-no-js">
-                To view this video please enable JavaScript, and consider upgrading to a web browser that
-                <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-            </p>
-        </video>
+    <!-- Bookmark resume dialog -->
+    <div id="bookmarkAlert" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fff; padding:20px; border-radius:5px; box-shadow:0 2px 10px rgba(0,0,0,0.3); z-index:9999; text-align:center;">
+        <p id="bookmarkQuestion">Would you like to return to your bookmark?</p>
+        <button id="bookmarkYes" style="margin:5px; padding:10px 20px;">Yes</button>
+        <button id="bookmarkNo" style="margin:5px; padding:10px 20px;">No</button>
     </div>
+
+    <div id="player"></div>
 
     <script src="js/3rd/videojs/video.js"></script>
     <script src="js/videojs-http-streaming.js"></script>
-    <script src="js/bridge.js"></script>
     <script src="config.js"></script>
     <script src="js/main.js"></script>
 </body>

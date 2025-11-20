@@ -5,17 +5,15 @@ var videoall_config = {
     width: "100%",
     height: "100%", 
     autoplay: {{AUTOPLAY}},
-    seekModeIncomplete: "{{SEEK_MODE_INCOMPLETE}}", // NONE, ANYWHERE, ONLY_BACKWARD
-    seekModeCompleted: "ANYWHERE", // NONE, ANYWHERE, ONLY_BACKWARD
+    seekModeIncomplete: "{{SEEK_MODE_INCOMPLETE}}",
+    seekModeCompleted: "ANYWHERE",
     bookmarkQuestion: "Would you like to return to your bookmark?",
     bookmarkForceResume: true,
-    completionBy: "{{COMPLETION_BY}}", // END, PERCENT_WATCHED
+    completionBy: "{{COMPLETION_BY}}",
     completionFraction: {{COMPLETION_FRACTION}},
     completeFn: function() {
         // console.log("Perform custom completion activities here.");
     },
-    tracks: [
-        
-    ],
+    tracks: [],
     poster: ""
 };

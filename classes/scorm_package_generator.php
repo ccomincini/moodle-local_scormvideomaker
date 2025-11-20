@@ -117,7 +117,7 @@ class scorm_package_generator {
         // Files to exclude from the package
         $excludefiles = ['.DS_Store', 'README.md', '.gitkeep', '.git', 'Thumbs.db'];
         // Extensions to exclude
-        $excludeext = ['old', 'map', 'xsd'];
+        $excludeext = ['old'];
 
         while (false !== ($file = readdir($dir))) {
             if ($file !== '.' && $file !== '..') {

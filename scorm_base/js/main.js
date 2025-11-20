@@ -1,67 +1,3 @@
-// Contenuto sintetico e analizzato di main.js dal pacchetto SCORM video player
-
-// Inizializza il video player con Video.js
-var player = videojs('videoPlayer');
-
-// Configurazione iniziale caricata da config.js (ipotesi)
-var config = videoall_config;
-
-// Funzione per gestire la navigazione nella seekbar in base alla modalità scelta
-function configureNavigationMode() {
-    switch(config.navigationMode) {
-        case 'free':
-            // la seekbar è libera
-            player.controlBar.progressControl.enable();
-            break;
-        case 'backwards':
-            // solo navigazione a ritroso, limite
-            // implementazione specifica da definire
-            break;
-        case 'locked':
-            // seekbar bloccata, no possibilità di seek
-            player.controlBar.progressControl.disable();
-            break;
-    }
-}
-
-// Funzione per tracking SCORM 1.2 (semplificata)
-function saveScormProgress(percentage) {
-    // Esempio: invio dati di completamento a SCORM
-    if(config.trackingMode === 'scorm12') {
-        // salvataggio su SCORM API
-        // dettaglio implementativo da integrare
-        console.log('SCORM progress saved at ' + percentage + '%');
-    }
-}
-
-// Funzione per il controllo completamento video
-player.on('timeupdate', function() {
-    var currentTime = player.currentTime();
-    var duration = player.duration();
-    var percent = (currentTime / duration) * 100;
-
-    // Controllo completamento in base a configurazione
-    if(config.completionCriteria.type === 'percentage') {
-        if(percent >= config.completionCriteria.value) {
-            saveScormProgress(100); // Completamento raggiunto
-        }
-    } else if(config.completionCriteria.type === 'end') {
-        if(currentTime >= duration) {
-            saveScormProgress(100); // Completamento a fine video
-        }
-    }
-});
-
-// Configurazione iniziale player
-configureNavigationMode();
-
-// Semplice gestione poster
-if(config.posterImage) {
-    player.poster(config.posterImage);
-}
-
-// Altre funzionalità potrebbero essere implementate
-
 var ssv = (function (e) {
   var t = {};
   function n(r) {
@@ -6647,8 +6583,9 @@ var ssv = (function (e) {
             var t = "";
             this.config.poster && (t = 'poster="' + this.config.poster + '"');
             for (
+			//IVF: disablePictureInPicture per non far barare i medici su firefox e safari
               var n =
-                  '<video playsinline id="player1" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto" width="' +
+                  '<video playsinline id="player1" class="video-js vjs-default-skin vjs-big-play-centered" controls disablePictureInPicture preload="auto" width="' + 
                   this.config.width +
                   '" height="' +
                   this.config.height +

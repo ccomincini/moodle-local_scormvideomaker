@@ -318,6 +318,32 @@ class scorm_creator {
         // Parse the SCORM package - this extracts and processes the content.
         mtrace('[upload_scorm_package] Starting SCORM package parsing...');
         
+        // DEBUG: Extract and log the manifest content before parsing
+        $za = new \ZipArchive();
+        if ($za->open($zipfile) === true) {
+            $manifestcontent = $za->getFromName('imsmanifest.xml');
+            if ($manifestcontent) {
+                mtrace('[upload_scorm_package DEBUG] Manifest content (first 500 chars):');
+                mtrace(substr($manifestcontent, 0, 500));
+                
+                // Validate XML
+                libxml_use_internal_errors(true);
+                $xml = simplexml_load_string($manifestcontent);
+                if ($xml === false) {
+                    mtrace('[upload_scorm_package ERROR] Invalid XML in manifest!');
+                    foreach (libxml_get_errors() as $error) {
+                        mtrace('[XML ERROR] Line ' . $error->line . ': ' . trim($error->message));
+                    }
+                    libxml_clear_errors();
+                } else {
+                    mtrace('[upload_scorm_package DEBUG] XML is valid');
+                }
+            } else {
+                mtrace('[upload_scorm_package ERROR] imsmanifest.xml not found in ZIP!');
+            }
+            $za->close();
+        }
+        
         // Capture any output from scorm_parse
         ob_start();
         $parsesuccess = scorm_parse($scorm, false);
@@ -337,6 +363,15 @@ class scorm_creator {
         
         mtrace('[upload_scorm_package ERROR] SCORM parsing failed');
         mtrace('[upload_scorm_package ERROR] SCORM object after parse attempt: ' . json_encode($scorm));
+        
+        // Check if SCOs were created
+        $scos = $DB->get_records('scorm_scoes', ['scorm' => $scormid]);
+        mtrace('[upload_scorm_package DEBUG] Number of SCOs created: ' . count($scos));
+        if (!empty($scos)) {
+            foreach ($scos as $sco) {
+                mtrace('[upload_scorm_package DEBUG] SCO: ' . $sco->identifier . ' - ' . $sco->title);
+            }
+        }
         
         // DEBUG: Copy failed ZIP to /tmp for inspection
         $debugzip = '/tmp/scorm_debug_' . time() . '.zip';

@@ -353,25 +353,31 @@ class scorm_creator {
             mtrace('[upload_scorm_package DEBUG] Parser output: ' . trim($parseoutput));
         }
         
-        if ($parsesuccess) {
-            mtrace('[upload_scorm_package] SCORM package parsed successfully');
+        // Check if SCOs were created - this is the real indicator of success
+        $scos = $DB->get_records('scorm_scoes', ['scorm' => $scormid]);
+        $scocount = count($scos);
+        mtrace('[upload_scorm_package DEBUG] Number of SCOs created: ' . $scocount);
+        
+        if (!empty($scos)) {
+            foreach ($scos as $sco) {
+                mtrace('[upload_scorm_package DEBUG] SCO: ' . $sco->identifier . ' - ' . $sco->title);
+            }
+        }
+        
+        // Consider parsing successful if SCOs were created and launch is set
+        // scorm_parse() can return false even when it works (e.g., for warnings)
+        if ($scocount > 0 && !empty($scorm->launch)) {
+            mtrace('[upload_scorm_package] SCORM package parsed successfully (SCOs created: ' . $scocount . ', launch: ' . $scorm->launch . ')');
             // Update the scorm record with parsed data.
             $DB->update_record('scorm', $scorm);
             mtrace('[upload_scorm_package] SCORM record updated with parsed data');
             return true;
         }
         
-        mtrace('[upload_scorm_package ERROR] SCORM parsing failed');
+        // If we get here, parsing really failed
+        mtrace('[upload_scorm_package ERROR] SCORM parsing failed - no SCOs created or no launch point');
+        mtrace('[upload_scorm_package ERROR] Parse return value: ' . ($parsesuccess ? 'true' : 'false'));
         mtrace('[upload_scorm_package ERROR] SCORM object after parse attempt: ' . json_encode($scorm));
-        
-        // Check if SCOs were created
-        $scos = $DB->get_records('scorm_scoes', ['scorm' => $scormid]);
-        mtrace('[upload_scorm_package DEBUG] Number of SCOs created: ' . count($scos));
-        if (!empty($scos)) {
-            foreach ($scos as $sco) {
-                mtrace('[upload_scorm_package DEBUG] SCO: ' . $sco->identifier . ' - ' . $sco->title);
-            }
-        }
         
         // DEBUG: Copy failed ZIP to /tmp for inspection
         $debugzip = '/tmp/scorm_debug_' . time() . '.zip';

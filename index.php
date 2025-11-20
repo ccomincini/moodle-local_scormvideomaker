@@ -42,10 +42,7 @@ if ($mform->is_cancelled()) {
 }
 
 if ($data = $mform->get_data()) {
-    // Debug
-    error_log("=== SCORM VIDEO MAKER DEBUG ===");
-    error_log("Form data received, starting creation...");
-    error_log("Course ID: " . $data->courseid);
+    // NO output before this point!
     
     // Create SCORM activity.
     $creator = new \local_scormvideomaker\scorm_creator();
@@ -54,25 +51,21 @@ if ($data = $mform->get_data()) {
         $scormid = $creator->create_scorm_activity($data);
         
         if ($scormid) {
-            // Redirect to course page with success message
-            $courseurl = new moodle_url('/course/view.php', ['id' => $data->courseid]);
-            redirect(
-                $courseurl,
-                get_string('success', 'local_scormvideomaker'),
-                null,
-                \core\output\notification::NOTIFY_SUCCESS
-            );
-            // Script termina qui - non viene mai eseguito altro codice dopo redirect()
+            // Store success message in session
+            \core\notification::success(get_string('success', 'local_scormvideomaker'));
+            
+            // Simple redirect without message parameter
+            redirect(new moodle_url('/course/view.php', ['id' => $data->courseid]));
+            exit; // Assicurati che lo script termini
         } else {
             throw new moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker');
         }
     } catch (Exception $e) {
-        // Output header only on error
-        echo $OUTPUT->header();
-        echo $OUTPUT->notification($e->getMessage(), 'notifyproblem');
-        echo $OUTPUT->continue_button(new moodle_url('/local/scormvideomaker/index.php'));
-        echo $OUTPUT->footer();
-        die();
+        // Store error in session
+        \core\notification::error($e->getMessage());
+        // Redirect back to form
+        redirect(new moodle_url('/local/scormvideomaker/index.php'));
+        exit;
     }
 }
 

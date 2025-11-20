@@ -144,3 +144,4 @@ $string['scorm_package_loaded_desc'] = 'Il pacchetto SCORM è stato caricato aut
 $string['form_section'] = 'Sezione corso';
 $string['form_section_help'] = 'Il numero della sezione in cui verrà aggiunta l\'attività SCORM (0 per la prima sezione, 1 per la seconda, ecc.)';
 $string['error_invalid_section'] = 'Numero di sezione non valido';
+$string['error_select_course'] = 'Seleziona un corso dalla lista';

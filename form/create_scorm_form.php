@@ -142,6 +142,11 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
+        // Validate courseid is present.
+        if (empty($data['courseid'])) {
+            $errors['courseid'] = get_string('error_select_course', 'local_scormvideomaker');
+        }
+
         // Validate completion percentage.
         if ($data['completion_type'] === 'percentage') {
             $percentage = intval($data['completion_percentage'] ?? 100);

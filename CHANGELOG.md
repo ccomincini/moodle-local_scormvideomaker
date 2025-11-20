@@ -1,61 +1,122 @@
-# Changelog - SCORM Video Maker
+# Changelog
 
-## [1.0.3] - 2025-11-16
+All notable changes to this project will be documented in this file.
 
-### Changed
-- **IMPORTANTE**: Migrazione da `scorm_templates/` a `scorm_base/` come template principale
-  - Ora usa la directory completa con VideoJS e tutte le funzionalità
-  - Utilizza file `.template` per index.html, config.js e imsmanifest.xml
-  - Sistema di sostituzione variabili migliorato
-- Gestione MIME type corretta per HLS (`application/x-mpegURL`)
-- Autoplay ora genera `true/false` invece di `0/1` per JavaScript
-- Escape HTML corretto con `ENT_QUOTES` per tutti i campi
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.0.5](https://github.com/ccomincini/moodle-local_scormvideomaker/compare/v1.0.4...v1.0.5) - 2025-11-20
 
 ### Added
-- Template files in `scorm_base/`:
-  - `index.html.template`
-  - `config.js.template`
-  - `imsmanifest.xml.template`
-- Funzione `process_template_files()` per gestione template
 
-### Removed
-- Dipendenza da `scorm_templates/` (vimeo/youtube/hls)
-- Funzione `get_template_path()` non più necessaria
+- Italian language translations (lang/it/local_scormvideomaker.php)
+- New language strings: `choosecategory`, `choosecourse`, `nocoursesincategory`
+- Proper AMD module loading for translated JavaScript strings
+- Comprehensive form validation with database checks
 
-## [1.0.2] - 2025-11-16
 
 ### Fixed
-- **CRITICAL BUG FIX**: Aggiunto file mancante `scorm_runtime.js` nei template HLS e YouTube
-  - Il parsing SCORM falliva perché i manifest dichiaravano il file ma non era presente
-  - Questo causava l'errore "Impossibile creare l'attività SCORM nel corso"
-  
-### Added
-- Logging dettagliato con `mtrace()` e `debugging()` in tutte le funzioni critiche:
-  - `scorm_creator::create_scorm_activity()`
-  - `scorm_creator::create_scorm_module()`
-  - `scorm_creator::upload_scorm_package()`
-  - `scorm_package_generator::generate_scorm_package()`
-- Prefissi di log chiari per identificare facilmente la fonte dei messaggi:
-  - `[SCORM Creator]` - Operazioni principali
-  - `[create_scorm_module]` - Creazione modulo
-  - `[upload_scorm_package]` - Upload pacchetto
-  - `[SCORM Generator]` - Generazione pacchetto
-  - `[... ERROR]` - Tutti gli errori
-- File `TEST_LOG_INSTRUCTIONS.md` con istruzioni per il debugging
+
+- **Form Validation Bug**: Fixed course select showing placeholder text instead of translated strings
+    - Implemented `definition_after_data()` method to repopulate course options
+    - Course selection now properly validates against database records
+    - AJAX course loading respects form validation security
+- **Redirect Issue**: Fixed form submission getting stuck after package creation
+    - Replaced `mtrace()` with `error_log()` to prevent output buffering issues
+    - Removed debugging output that interfered with HTTP headers
+    - Redirect now completes successfully to course view page
+- **JavaScript String Loading**: Fixed hardcoded strings in category_course_selector.js
+    - Implemented `Str.get_strings()` for asynchronous translation loading
+    - Proper error handling for missing language strings
+
 
 ### Changed
-- Gestione errori migliorata con messaggi dettagliati
-- Stack trace completo in caso di eccezioni
 
-## [1.0.1] - 2025-11-15
+- Optimized form field definitions for better user experience
+- Improved console logging for better debugging
+- Enhanced error handling and validation messages
+- Repository cleanup: removed test/troubleshooting documentation files
+
+
+### Performance
+
+- Optimized JavaScript module loading for faster page rendering
+- Reduced debugging output in production environments
+
+***
+
+## [1.0.4](https://github.com/ccomincini/moodle-local_scormvideomaker/compare/v1.0.3...v1.0.4) - 2025-11-19
 
 ### Added
-- Versione iniziale del plugin
-- Supporto per video Vimeo, YouTube e HLS
-- Generazione pacchetti SCORM 1.2
-- Template personalizzabili per ogni tipo di video
-- Gestione completamento video
-- Opzioni seekbar (locked, free, backward)
 
-### Known Issues (v1.0.1)
-- File `scorm_runtime.js` mancante nei template HLS e YouTube
+- Code refactoring for better maintainability
+- Enhanced debugging capabilities
+
+
+### Fixed
+
+- Improved AJAX error handling in course selector
+- Better error messages for debugging
+
+***
+
+## [1.0.3](https://github.com/ccomincini/moodle-local_scormvideomaker/compare/v1.0.2...v1.0.3) - 2025-11-18
+
+### Added
+
+- Category-based course selection with AJAX filtering
+- Dynamic course dropdown population
+- Course visibility indicator (shows "hidden" label for hidden courses)
+
+
+### Fixed
+
+- Course selection loading logic
+- Database query optimization
+
+***
+
+## [1.0.2](https://github.com/ccomincini/moodle-local_scormvideomaker/compare/v1.0.1...v1.0.2) - 2025-11-17
+
+### Added
+
+- Comprehensive form field descriptions and help text
+- Support for optional course section selection
+- Description field for SCORM activities
+
+
+### Fixed
+
+- Form field type validation
+- Help button integration for all form fields
+
+***
+
+## [1.0.1](https://github.com/ccomincini/moodle-local_scormvideomaker/compare/v1.0.0...v1.0.1) - 2025-11-16
+
+### Added
+
+- Basic SCORM 1.2 package generation
+- Support for Vimeo video source
+- Support for YouTube video source
+- Support for HLS streaming
+
+
+### Fixed
+
+- Manifest XML generation
+- SCORM package file structure
+
+***
+
+## [1.0.0](https://github.com/ccomincini/moodle-local_scormvideomaker/releases/tag/v1.0.0) - 2025-11-15
+
+### Added
+
+- Initial release
+- Core functionality for creating SCORM packages
+- Form for package configuration
+- Basic video handler infrastructure
+- Database services for AJAX operations
+- Admin settings page
+

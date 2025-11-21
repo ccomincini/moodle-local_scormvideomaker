@@ -114,20 +114,20 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
             'percentage' => get_string('completion_percentage', 'local_scormvideomaker'),
         ];
         $mform->addElement('select', 'completion_type', get_string('form_completion_type', 'local_scormvideomaker'), $completiontypes);
-        $mform->setDefault('completion_type', 'end');
+        $mform->setDefault('completion_type', get_config('local_scormvideomaker', 'default_completion_type'));
         $mform->addHelpButton('completion_type', 'form_completion_type', 'local_scormvideomaker');
 
         // Completion percentage (conditional).
         $mform->addElement('text', 'completion_percentage', get_string('form_completion_percentage', 'local_scormvideomaker'), ['size' => 3]);
         $mform->setType('completion_percentage', PARAM_INT);
-        $mform->setDefault('completion_percentage', 100);
+        $mform->setDefault('completion_percentage', get_config('local_scormvideomaker', 'default_completion_percentage'));
         $mform->hideIf('completion_percentage', 'completion_type', 'neq', 'percentage');
         $mform->addHelpButton('completion_percentage', 'form_completion_percentage', 'local_scormvideomaker');
 
         // Autoplay option.
         $mform->addElement('checkbox', 'autoplay', get_string('form_autoplay', 'local_scormvideomaker'));
         $mform->setType('autoplay', PARAM_BOOL);
-        $mform->setDefault('autoplay', 0);
+        $mform->setDefault('autoplay', get_config('local_scormvideomaker', 'default_autoplay'));
         $mform->addHelpButton('autoplay', 'form_autoplay', 'local_scormvideomaker');
 
         // Form buttons.

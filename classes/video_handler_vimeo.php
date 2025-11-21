@@ -39,52 +39,98 @@ class video_handler_vimeo implements video_handler_interface {
      * Process Vimeo video URL.
      *
      * Accepts Vimeo video ID (e.g., 123456789) or full URL.
+     * Also supports private videos with hash (e.g., 123456789/abc123def or 123456789?h=abc123def).
      *
      * @param string $videourl The video URL or ID
      * @return array Array with 'videoid' and 'videourl' keys
      * @throws \moodle_exception
      */
     public function process_video_url(string $videourl): array {
-        // Extract video ID from URL or use as-is if it's just an ID.
-        $videoid = $this->extract_vimeo_id($videourl);
+        // Extract video ID and optional hash from URL.
+        $result = $this->extract_vimeo_id($videourl);
 
-        if (empty($videoid)) {
+        if (empty($result['videoid'])) {
             throw new \moodle_exception(
                 'error_invalid_video_url',
                 'local_scormvideomaker'
             );
         }
 
-        $embedurl = 'https://player.vimeo.com/video/' . $videoid;
+        // Build embed URL.
+        $embedurl = 'https://player.vimeo.com/video/' . $result['videoid'];
+        
+        // Add hash parameter if present (for private videos).
+        if (!empty($result['hash'])) {
+            $embedurl .= '?h=' . $result['hash'];
+        }
 
         return [
-            'videoid' => $videoid,
+            'videoid' => $result['videoid'] . (!empty($result['hash']) ? '/' . $result['hash'] : ''),
             'videourl' => $embedurl,
         ];
     }
 
     /**
-     * Extract Vimeo video ID from URL or return as-is if it's an ID.
+     * Extract Vimeo video ID and optional hash from URL or input.
+     *
+     * Supports formats:
+     * - 123456789 (simple ID)
+     * - 123456789/abc123def (ID with hash)
+     * - 123456789?h=abc123def (ID with hash parameter)
+     * - https://vimeo.com/123456789
+     * - https://vimeo.com/manage/videos/123456789/abc123def
+     * - https://player.vimeo.com/video/123456789?h=abc123def
      *
      * @param string $input The input URL or ID
-     * @return string|false The video ID or false if invalid
+     * @return array Array with 'videoid' and optional 'hash' keys, or false if invalid
      */
     private function extract_vimeo_id(string $input) {
-        // If it's just a number, assume it's the video ID.
+        $result = ['videoid' => '', 'hash' => ''];
+        
+        // Remove whitespace.
+        $input = trim($input);
+
+        // Pattern 1: Simple numeric ID.
         if (preg_match('/^\d+$/', $input)) {
-            return $input;
+            $result['videoid'] = $input;
+            return $result;
         }
 
-        // Try to extract from various Vimeo URL formats.
+        // Pattern 2: ID/hash format (e.g., 123456789/abc123def).
+        if (preg_match('/^(\d+)\/(\w+)$/', $input, $matches)) {
+            $result['videoid'] = $matches[1];
+            $result['hash'] = $matches[2];
+            return $result;
+        }
+
+        // Pattern 3: ID?h=hash format (e.g., 123456789?h=abc123def).
+        if (preg_match('/^(\d+)\?h=(\w+)$/', $input, $matches)) {
+            $result['videoid'] = $matches[1];
+            $result['hash'] = $matches[2];
+            return $result;
+        }
+
+        // Pattern 4: Full URLs with various formats.
         $patterns = [
-            '/(?:https?:\/\/)?(?:www\.)?vimeo\.com\/(\d+)/',
-            '/(?:https?:\/\/)?vimeo\.com\/(\d+)/',
-            '/(?:https?:\/\/)?player\.vimeo\.com\/video\/(\d+)/',
+            // https://vimeo.com/manage/videos/123456789/abc123def.
+            '/vimeo\.com\/manage\/videos\/(\d+)\/(\w+)/',
+            // https://player.vimeo.com/video/123456789?h=abc123def.
+            '/player\.vimeo\.com\/video\/(\d+)\?h=(\w+)/',
+            // https://vimeo.com/123456789/abc123def.
+            '/vimeo\.com\/(\d+)\/(\w+)/',
+            // https://vimeo.com/123456789 (simple public video).
+            '/vimeo\.com\/(\d+)(?:[?&#]|$)/',
+            // https://player.vimeo.com/video/123456789.
+            '/player\.vimeo\.com\/video\/(\d+)/',
         ];
 
         foreach ($patterns as $pattern) {
             if (preg_match($pattern, $input, $matches)) {
-                return $matches[1];
+                $result['videoid'] = $matches[1];
+                if (isset($matches[2])) {
+                    $result['hash'] = $matches[2];
+                }
+                return $result;
             }
         }
 

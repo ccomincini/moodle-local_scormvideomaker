@@ -9,6 +9,35 @@ body {
 	margin: 0;
 	text-align: center;
 	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+/* Container for responsive video */
+#player {
+	position: relative;
+	width: 100%;
+	height: 100vh;
+	max-height: 100%;
+}
+
+/* Make video.js player responsive in all browsers */
+.video-js {
+	position: absolute !important;
+	top: 0;
+	left: 0;
+	width: 100% !important;
+	height: 100% !important;
+	margin: 0;
+}
+
+.video-js .vjs-tech {
+	position: absolute !important;
+	top: 0;
+	left: 0;
+	width: 100% !important;
+	height: 100% !important;
+	object-fit: contain; /* Maintain aspect ratio */
 }
 
 .modal {
@@ -107,9 +136,9 @@ body {
 
 /* If config width is set to fully responsive, use these styles. */
 body.full-width .video-js, body.full-width .video-js .vjs-tech {
-	position: relative !important;
+	position: absolute !important;
 	width: 100% !important;
-	height: auto !important;
+	height: 100% !important;
 }
 body.full-width .vjs-poster {
 	position: absolute !important;
@@ -117,10 +146,6 @@ body.full-width .vjs-poster {
 	right: 0;
 	top: 0;
 	bottom: 0;
-}
-
-.video-js{
-	margin: 0 auto;
 }
 
 iframe#player{margin: 0 auto;}

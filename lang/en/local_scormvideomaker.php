@@ -41,6 +41,8 @@ $string['setting_default_completion_type'] = 'Default Completion Type';
 $string['setting_default_completion_type_desc'] = 'Select how videos should be marked as complete by default';
 $string['setting_default_completion_percentage'] = 'Default Completion Percentage';
 $string['setting_default_completion_percentage_desc'] = 'Default percentage of video to watch before marking as complete (0-100)';
+$string['setting_default_seekbar'] = 'Default Seek Bar Behavior';
+$string['setting_default_seekbar_desc'] = 'Select the default seek bar behavior for new videos';
 
 // Form labels - Course selection.
 $string['form_category'] = 'Category';

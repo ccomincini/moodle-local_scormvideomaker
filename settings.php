@@ -78,4 +78,18 @@ if ($hassiteconfig) {
         '80',
         PARAM_INT
     ));
+
+    // Setting: Default seekbar behavior.
+    $seekbaroptions = [
+        'locked' => get_string('seekbar_locked', 'local_scormvideomaker'),
+        'free' => get_string('seekbar_free', 'local_scormvideomaker'),
+        'backward' => get_string('seekbar_backward', 'local_scormvideomaker'),
+    ];
+    $settings->add(new admin_setting_configselect(
+        'local_scormvideomaker/default_seekbar',
+        get_string('setting_default_seekbar', 'local_scormvideomaker'),
+        get_string('setting_default_seekbar_desc', 'local_scormvideomaker'),
+        'locked',
+        $seekbaroptions
+    ));
 }

@@ -39,6 +39,8 @@ $string['setting_default_completion_type'] = 'Tipo di completamento predefinito'
 $string['setting_default_completion_type_desc'] = 'Seleziona il tipo di completamento predefinito per i nuovi video';
 $string['setting_default_completion_percentage'] = 'Percentuale completamento predefinita';
 $string['setting_default_completion_percentage_desc'] = 'Percentuale predefinita di video da guardare prima di contrassegnarlo come completato (0-100)';
+$string['setting_default_seekbar'] = 'Comportamento barra di avanzamento predefinito';
+$string['setting_default_seekbar_desc'] = 'Seleziona il comportamento predefinito della barra di avanzamento per i nuovi video';
 
 // Form labels - Video Configuration.
 $string['form_category'] = 'Categoria';

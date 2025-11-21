@@ -105,7 +105,7 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
             'backward' => get_string('seekbar_backward', 'local_scormvideomaker'),
         ];
         $mform->addElement('select', 'seekbar', get_string('form_seekbar', 'local_scormvideomaker'), $seekbaroptions);
-        $mform->setDefault('seekbar', 'locked');
+        $mform->setDefault('seekbar', get_config('local_scormvideomaker', 'default_seekbar'));
         $mform->addHelpButton('seekbar', 'form_seekbar', 'local_scormvideomaker');
 
         // Completion type.

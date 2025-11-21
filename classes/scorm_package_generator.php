@@ -165,6 +165,14 @@ class scorm_package_generator {
             $configurl = $videoparams['videoid'];
         }
 
+        // Determine player type
+        $playertypes = [
+            'vimeo' => 'vimeo',
+            'youtube' => 'youtube',
+            'hls' => 'videojs'
+        ];
+        $playertype = $playertypes[$formdata->videotype] ?? 'videojs';
+
         // Determine MIME type based on video type
         $mimetypes = [
             'vimeo' => 'video/mp4',
@@ -193,6 +201,7 @@ class scorm_package_generator {
             '{{TITLE}}' => htmlspecialchars($formdata->title, ENT_QUOTES, 'UTF-8'),
             '{{DESCRIPTION}}' => htmlspecialchars($formdata->description ?? '', ENT_QUOTES, 'UTF-8'),
             '{{VIDEO_URL}}' => $configurl,
+            '{{PLAYER_TYPE}}' => $playertype,
             '{{VIDEO_TYPE}}' => strtoupper($formdata->videotype),
             '{{VIDEO_MIME_TYPE}}' => $mimetype,
             '{{SEEK_MODE_INCOMPLETE}}' => $seekmode,

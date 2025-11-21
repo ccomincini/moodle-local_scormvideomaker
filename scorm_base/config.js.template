@@ -1,6 +1,6 @@
 var videoall_config = {
     trackingMode: "scorm12",
-    playerType: "videojs",
+    playerType: "{{PLAYER_TYPE}}",
     url: "{{VIDEO_URL}}",
     width: "100%",
     height: "100%", 

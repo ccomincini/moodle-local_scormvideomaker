@@ -17,7 +17,7 @@
  * Category and course selector for SCORM Video Maker.
  *
  * @module     local_scormvideomaker/category_course_selector
- * @copyright  2025 Carlo Comincini <carlo@comincini.it>
+ * @copyright 2025 Carlo Comincini - Invisiblefarm s.r.l. <c.comincini@invisiblefarm.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

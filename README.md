@@ -116,9 +116,7 @@ See [LICENSE](LICENSE) for full license text.
 ## 👥 Credits
 
 **Author**: Carlo Comincini  
-**Email**: carlo@comincini.it  
-**Copyright**: 2025 Carlo Comincini
-
+**@copyright**: 2025 Carlo Comincini - Invisiblefarm s.r.l. <c.comincini@invisiblefarm.com>
 ## 🔄 Changelog
 
 For detailed version history, see [CHANGELOG.md](CHANGELOG.md).

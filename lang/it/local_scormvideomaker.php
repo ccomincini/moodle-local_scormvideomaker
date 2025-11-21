@@ -17,7 +17,7 @@
  * Language strings for SCORM Video Maker (Italian).
  *
  * @package local_scormvideomaker
- * @copyright 2025 Carlo Comincini <carlo@comincini.it>
+ * @copyright 2025 Carlo Comincini - Invisiblefarm s.r.l. <c.comincini@invisiblefarm.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();

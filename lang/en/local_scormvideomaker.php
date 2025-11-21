@@ -151,3 +151,13 @@ $string['selectcategoryfirst'] = 'Select a category first';
 $string['choosecategory'] = 'Select a category...';
 $string['choosecourse'] = 'Select a course...';
 $string['nocoursesincategory'] = 'No courses in this category';
+
+// Restrict access.
+$string['form_enable_restrict_access'] = 'Enable conditional access';
+$string['form_enable_restrict_access_help'] = 'Enable access restrictions for this activity';
+$string['form_dependency_activity'] = 'Prerequisite activity';
+$string['form_dependency_activity_help'] = 'Select an activity that must be completed before accessing this one';
+$string['form_require_completion'] = 'Require completion';
+$string['form_require_completion_help'] = 'The prerequisite activity must be completed';
+$string['form_no_dependency'] = 'No dependency';
+$string['form_select_course_first'] = 'Select a course first';

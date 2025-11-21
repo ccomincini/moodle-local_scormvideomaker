@@ -33,4 +33,12 @@ $functions = [
         'ajax'        => true,
         'loginrequired' => true,
     ],
+    'local_scormvideomaker_get_course_activities' => [
+        'classname'   => 'local_scormvideomaker\external\get_course_activities',
+        'methodname'  => 'execute',
+        'description' => 'Get activities with completion enabled for a specific course',
+        'type'        => 'read',
+        'ajax'        => true,
+        'loginrequired' => true,
+    ],
 ];

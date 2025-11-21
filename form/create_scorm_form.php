@@ -130,6 +130,29 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         $mform->setDefault('autoplay', get_config('local_scormvideomaker', 'default_autoplay'));
         $mform->addHelpButton('autoplay', 'form_autoplay', 'local_scormvideomaker');
 
+        // Restrict access (Conditional Access).
+        $mform->addElement('header', 'restrictaccessheader', get_string('restrictaccess', 'availability'));
+
+        // Enable restrict access.
+        $mform->addElement('checkbox', 'enablerestrictaccess', get_string('form_enable_restrict_access', 'local_scormvideomaker'));
+        $mform->setType('enablerestrictaccess', PARAM_BOOL);
+        $mform->addHelpButton('enablerestrictaccess', 'form_enable_restrict_access', 'local_scormvideomaker');
+
+        // Activity completion dependency.
+        $mform->addElement('select', 'dependencycmid', get_string('form_dependency_activity', 'local_scormvideomaker'),
+            ['' => get_string('form_select_course_first', 'local_scormvideomaker')]);
+        $mform->setType('dependencycmid', PARAM_INT);
+        $mform->hideIf('dependencycmid', 'enablerestrictaccess');
+        $mform->addHelpButton('dependencycmid', 'form_dependency_activity', 'local_scormvideomaker');
+
+        // Require completion.
+        $mform->addElement('checkbox', 'dependencycompletion', get_string('form_require_completion', 'local_scormvideomaker'));
+        $mform->setType('dependencycompletion', PARAM_BOOL);
+        $mform->setDefault('dependencycompletion', 1);
+        $mform->hideIf('dependencycompletion', 'enablerestrictaccess');
+        $mform->hideIf('dependencycompletion', 'dependencycmid', 'eq', '');
+        $mform->addHelpButton('dependencycompletion', 'form_require_completion', 'local_scormvideomaker');
+
         // Form buttons.
         $this->add_action_buttons(true, get_string('createscorm', 'local_scormvideomaker'));
     }
@@ -148,6 +171,7 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         
         // Ottieni i valori inviati
         $categoryid = $mform->getSubmitValue('categoryid');
+        $courseid = $mform->getSubmitValue('courseid');
         
         // Se c'è una categoria, ripopola i corsi
         if ($categoryid) {
@@ -163,6 +187,21 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
                 // Aggiorna le opzioni dell'elemento
                 $courseelement->removeOptions();
                 $courseelement->loadArray($options);
+            }
+        }
+
+        // Se c'è un corso selezionato, ripopola le attività per la dipendenza
+        if ($courseid) {
+            $activities = self::get_course_activities($courseid);
+            if (!empty($activities)) {
+                $dependencyelement = $mform->getElement('dependencycmid');
+                
+                // Ricrea l'elemento con tutte le attività
+                $options = ['' => get_string('form_no_dependency', 'local_scormvideomaker')] + $activities;
+
+                // Aggiorna le opzioni dell'elemento
+                $dependencyelement->removeOptions();
+                $dependencyelement->loadArray($options);
             }
         }
     }
@@ -259,5 +298,46 @@ class local_scormvideomaker_create_scorm_form extends moodleform {
         }
 
         return $courses;
+    }
+
+    /**
+     * Get activities from a course that support completion.
+     *
+     * @param int $courseid Course ID
+     * @return array Activities array indexed by course module ID
+     */
+    public static function get_course_activities(int $courseid): array {
+        global $DB;
+
+        $activities = [];
+
+        if ($courseid <= 0) {
+            return $activities;
+        }
+
+        // Get all course modules with completion enabled.
+        $sql = "SELECT cm.id, cm.instance, cm.module, cm.section, m.name as modname
+                FROM {course_modules} cm
+                JOIN {modules} m ON m.id = cm.module
+                WHERE cm.course = :courseid
+                  AND cm.deletioninprogress = 0
+                  AND cm.completion > 0
+                ORDER BY cm.section ASC, cm.id ASC";
+        
+        $modulelist = $DB->get_records_sql($sql, ['courseid' => $courseid]);
+
+        foreach ($modulelist as $module) {
+            // Get the actual activity name from the module table.
+            $activityname = $DB->get_field($module->modname, 'name', ['id' => $module->instance]);
+            
+            if ($activityname) {
+                // Format: "Section X: Activity Name (type)".
+                $sectionnum = $DB->get_field('course_sections', 'section', ['id' => $module->section]);
+                $typename = get_string('modulename', $module->modname);
+                $activities[$module->id] = get_string('section') . ' ' . $sectionnum . ': ' . $activityname . ' (' . $typename . ')';
+            }
+        }
+
+        return $activities;
     }
 }

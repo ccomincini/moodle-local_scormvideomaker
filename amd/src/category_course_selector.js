@@ -30,16 +30,19 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str'], function($, Aja
         init: function() {
             var categorySelect = $('#id_categoryid');
             var courseSelect = $('#id_courseid');
+            var activitySelect = $('#id_dependencycmid');
 
             // Carica le stringhe tradotte
             var strings = [
                 {key: 'choosecourse', component: 'local_scormvideomaker'},
-                {key: 'nocoursesincategory', component: 'local_scormvideomaker'}
+                {key: 'nocoursesincategory', component: 'local_scormvideomaker'},
+                {key: 'form_no_dependency', component: 'local_scormvideomaker'}
             ];
 
             Str.get_strings(strings).then(function(translatedStrings) {
                 var chooseCourseText = translatedStrings[0];
                 var noCoursesText = translatedStrings[1];
+                var noDependencyText = translatedStrings[2];
 
                 console.log('SCORM Video Maker: Initializing category/course selector');
                 console.log('Category select found:', categorySelect.length);
@@ -50,10 +53,51 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str'], function($, Aja
                     return;
                 }
 
-                // Log when course is selected.
+                // Handle course change - load activities for dependency.
                 courseSelect.on('change', function() {
-                    var selectedCourseId = $(this).val();
-                    console.log('SCORM Video Maker: Course selected:', selectedCourseId);
+                    var courseId = $(this).val();
+                    console.log('SCORM Video Maker: Course selected:', courseId);
+                    
+                    // Clear current activities.
+                    if (activitySelect.length) {
+                        activitySelect.empty();
+                        activitySelect.append($('<option>', {
+                            value: '',
+                            text: noDependencyText
+                        }));
+
+                        if (!courseId) {
+                            return;
+                        }
+
+                        console.log('SCORM Video Maker: Calling AJAX to load activities...');
+
+                        // Load activities for selected course.
+                        var activityPromises = Ajax.call([{
+                            methodname: 'local_scormvideomaker_get_course_activities',
+                            args: {
+                                courseid: parseInt(courseId)
+                            }
+                        }]);
+
+                        activityPromises[0].done(function(activities) {
+                            console.log('SCORM Video Maker: Received activities:', activities);
+                            if (!activities || activities.length === 0) {
+                                console.log('SCORM Video Maker: No activities found for this course');
+                                return;
+                            }
+                            $.each(activities, function(index, activity) {
+                                activitySelect.append($('<option>', {
+                                    value: activity.id,
+                                    text: activity.name
+                                }));
+                            });
+                            console.log('SCORM Video Maker: Populated', activities.length, 'activities');
+                        }).fail(function(error) {
+                            console.error('SCORM Video Maker: AJAX error loading activities:', error);
+                            Notification.exception(error);
+                        });
+                    }
                 });
 
                 // Handle category change.

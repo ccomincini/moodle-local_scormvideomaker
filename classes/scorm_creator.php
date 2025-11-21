@@ -239,6 +239,11 @@ class scorm_creator {
         // Update course section sequence.
         $this->update_course_section_sequence($cm->id, $sectionrecord->id);
 
+        // Apply conditional access restrictions if enabled.
+        if (!empty($formdata->enablerestrictaccess) && !empty($formdata->dependencycmid)) {
+            $this->apply_conditional_access($cm->id, $formdata);
+        }
+
         // Rebuild course cache.
         rebuild_course_cache($course->id, true);
 
@@ -329,5 +334,45 @@ class scorm_creator {
         $section->sequence = implode(',', $sequence);
 
         $DB->update_record('course_sections', $section);
+    }
+
+    /**
+     * Apply conditional access restrictions to a course module.
+     *
+     * @param int $cmid The course module ID
+     * @param object $formdata The form data containing restriction settings
+     * @return void
+     */
+    private function apply_conditional_access(int $cmid, object $formdata): void {
+        global $DB;
+
+        // Get the course module.
+        $cm = $DB->get_record('course_modules', ['id' => $cmid], '*', \MUST_EXIST);
+
+        // Build availability JSON structure.
+        $availability = [
+            'op' => '&', // AND operator (all conditions must be met)
+            'c' => [], // Conditions array
+            'showc' => [false], // Show activity when conditions not met: false = hide entirely
+        ];
+
+        // Add completion dependency condition.
+        $condition = [
+            'type' => 'completion',
+            'cm' => intval($formdata->dependencycmid),
+        ];
+
+        // Add expected completion state (1 = completed).
+        if (!empty($formdata->dependencycompletion)) {
+            $condition['e'] = 1; // Expected completion state: 1 = must be completed
+        }
+
+        $availability['c'][] = $condition;
+
+        // Encode to JSON.
+        $cm->availability = json_encode($availability);
+
+        // Update the course module.
+        $DB->update_record('course_modules', $cm);
     }
 }

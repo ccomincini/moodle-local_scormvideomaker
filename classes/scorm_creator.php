@@ -292,7 +292,7 @@ class scorm_creator {
         $scorm->sha1hash = $storedfile->get_contenthash();
         $scorm->revision = 0;
         
-        // Parse the SCORM package.
+        // Parse the SCORM package - this extracts content to 'content' filearea.
         scorm_parse($scorm, false);
         
         // Check if SCOs were created.
@@ -301,6 +301,11 @@ class scorm_creator {
         if (!empty($scos) && !empty($scorm->launch)) {
             // Update the scorm record with parsed data.
             $DB->update_record('scorm', $scorm);
+            
+            // SECURITY: Delete the ZIP file from 'package' filearea after successful parsing.
+            // The extracted content is now in 'content' filearea and that's all we need.
+            $fs->delete_area_files($context->id, 'mod_scorm', 'package');
+            
             return true;
         }
         

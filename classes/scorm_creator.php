@@ -167,7 +167,7 @@ class scorm_creator {
         
         // FIXED SCORM settings as requested.
         $scorm->version = 'SCORM_1.2';
-        $scorm->maxgrade = 100; // Always 100.
+        $scorm->maxgrade = 100; // Max grade is 100, but actual grade = percentage watched.
         $scorm->grademethod = 1; // Highest grade.
         $scorm->maxattempt = 1; // 1 attempt only.
         $scorm->whatgrade = 0; // Highest attempt.
@@ -185,19 +185,25 @@ class scorm_creator {
         $scorm->timeopen = 0;
         $scorm->timeclose = 0;
         
-        // COMPLETION SETTINGS - based on completion_type from form.
-        // The percentage value controls when SCORM reaches "completed" status.
-        // Grade is always 100 when completed.
+        // COMPLETION SETTINGS
+        // The grade is ALWAYS the percentage watched (e.g., 75 if watched 75%).
+        // The completion_percentage controls WHEN the activity is marked as "completed".
+        // Example: If completion_percentage = 50:
+        //   - User watches 50% → status = completed, grade = 50
+        //   - User watches 75% → status = completed, grade = 75
+        //   - User watches 30% → status = incomplete, grade = 30
         $scorm->completionstatusrequired = 4; // Require "completed" status.
         $scorm->completionstatusallscos = 0;
         $scorm->completionscorerequired = 0;
         
         if ($formdata->completion_type === 'percentage') {
-            // Complete at specific percentage.
-            $scorm->completionminprogressrequired = intval($formdata->completion_percentage ?? 100);
+            // Complete when user reaches the specified percentage.
+            // Grade will be the actual percentage watched.
+            $scorm->completionscorerequired = intval($formdata->completion_percentage ?? 100);
         } else {
-            // Complete at end (100%).
-            $scorm->completionminprogressrequired = 100;
+            // Complete only at end (100%).
+            // Grade will be 100 when completed.
+            $scorm->completionscorerequired = 100;
         }
         
         // Package settings.

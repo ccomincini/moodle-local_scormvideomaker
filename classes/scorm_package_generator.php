@@ -158,6 +158,13 @@ class scorm_package_generator {
         $handler = video_handler_factory::get_handler($formdata->videotype);
         $videoparams = $handler->process_video_url($formdata->videourl);
 
+        // For config.js, use appropriate URL format based on video type.
+        // Vimeo and YouTube need just the ID, HLS needs the full URL.
+        $configurl = $videoparams['videourl'];
+        if ($formdata->videotype === 'vimeo' || $formdata->videotype === 'youtube') {
+            $configurl = $videoparams['videoid'];
+        }
+
         // Determine MIME type based on video type
         $mimetypes = [
             'vimeo' => 'video/mp4',
@@ -185,7 +192,7 @@ class scorm_package_generator {
         $replacements = [
             '{{TITLE}}' => htmlspecialchars($formdata->title, ENT_QUOTES, 'UTF-8'),
             '{{DESCRIPTION}}' => htmlspecialchars($formdata->description ?? '', ENT_QUOTES, 'UTF-8'),
-            '{{VIDEO_URL}}' => $videoparams['videourl'],
+            '{{VIDEO_URL}}' => $configurl,
             '{{VIDEO_TYPE}}' => strtoupper($formdata->videotype),
             '{{VIDEO_MIME_TYPE}}' => $mimetype,
             '{{SEEK_MODE_INCOMPLETE}}' => $seekmode,

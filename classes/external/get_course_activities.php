@@ -94,8 +94,9 @@ class get_course_activities extends external_api {
             $activityname = $DB->get_field($module->modname, 'name', ['id' => $module->instance]);
             
             if ($activityname) {
-                // Get section number.
-                $sectionnum = $DB->get_field('course_sections', 'section', ['id' => $module->section]);
+                // Get section number - use direct query to handle missing section.
+                $sectioninfo = $DB->get_record('course_sections', ['id' => $module->section], 'section');
+                $sectionnum = $sectioninfo ? $sectioninfo->section : 0;
                 
                 // Get module type name.
                 $typename = get_string('modulename', $module->modname);

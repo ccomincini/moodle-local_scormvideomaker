@@ -43,73 +43,54 @@ class scorm_creator {
      * @throws \moodle_exception
      */
     public function create_scorm_activity(object $formdata) {
-        global $DB, $USER, $CFG;
+        global $DB;
 
-        mtrace('[SCORM Creator] Starting SCORM activity creation...');
-        // debugging('SCORM Creator: Form data received - ' . json_encode($formdata), DEBUG_DEVELOPER);
+        debugging('SCORM Creator: Form data received - ' . json_encode($formdata), DEBUG_DEVELOPER);
 
         // Validate course.
         try {
             $course = $DB->get_record('course', ['id' => $formdata->courseid], '*', \MUST_EXIST);
-            mtrace('[SCORM Creator] Course validated: ' . $course->fullname);
         } catch (\Exception $e) {
             $error = 'Course validation failed: ' . $e->getMessage();
-            mtrace('[SCORM Creator ERROR] ' . $error);
-            // debugging($error, DEBUG_DEVELOPER);
+            debugging('[SCORM Creator ERROR] ' . $error, DEBUG_DEVELOPER);
             throw new \moodle_exception('error_invalid_course', 'local_scormvideomaker', '', null, $error);
         }
 
         // Generate SCORM package.
-        mtrace('[SCORM Creator] Generating SCORM package...');
         $generator = new scorm_package_generator();
         $zipfile = $generator->generate_scorm_package($formdata);
 
         if (!$zipfile || !file_exists($zipfile)) {
             $error = 'SCORM package generation failed - no zip file created';
-            mtrace('[SCORM Creator ERROR] ' . $error);
-            // debugging($error, DEBUG_DEVELOPER);
+            debugging('[SCORM Creator ERROR] ' . $error, DEBUG_DEVELOPER);
             throw new \moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker', '', null, $error);
         }
 
-        mtrace('[SCORM Creator] Package generated: ' . $zipfile . ' (' . filesize($zipfile) . ' bytes)');
-
         try {
             // Create course module.
-            mtrace('[SCORM Creator] Creating SCORM module in course...');
             $scormid = $this->create_scorm_module($course, $formdata, $zipfile);
 
             if ($scormid) {
-                mtrace('[SCORM Creator] SCORM activity created successfully with ID: ' . $scormid);
                 // Clean up temp file.
                 if (file_exists($zipfile)) {
                     unlink($zipfile);
-                    mtrace('[SCORM Creator] Temporary file cleaned up');
                 }
-
                 return $scormid;
             }
 
-            $error = 'create_scorm_module returned false/null';
-            mtrace('[SCORM Creator ERROR] ' . $error);
-            // debugging($error, DEBUG_DEVELOPER);
-            throw new \moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker', '', null, $error);
+            throw new \moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker');
 
         } catch (\Exception $e) {
-            $error = 'Exception during SCORM module creation: ' . $e->getMessage();
-            mtrace('[SCORM Creator ERROR] ' . $error);
-            // debugging('Stack trace: ' . $e->getTraceAsString(), DEBUG_DEVELOPER);
-            
             // Clean up temp file on error.
             if (file_exists($zipfile)) {
                 unlink($zipfile);
-                mtrace('[SCORM Creator] Temporary file cleaned up after error');
             }
-            throw new \moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker', '', null, $error);
+            throw new \moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker', '', null, $e->getMessage());
         }
     }
 
     /**
-     * Create a SCORM course module.
+     * Create a SCORM course module with fixed settings.
      *
      * @param object $course The course object
      * @param object $formdata The form data
@@ -121,9 +102,6 @@ class scorm_creator {
 
         require_once($CFG->dirroot . '/course/lib.php');
 
-        mtrace('[create_scorm_module] Starting module creation');
-        mtrace('[create_scorm_module] Course: ' . $course->id . ', Section: ' . ($formdata->section ?? 0));
-
         // Get the section.
         $section = $formdata->section ?? 0;
         $sectionrecord = $DB->get_record(
@@ -133,7 +111,6 @@ class scorm_creator {
         );
 
         if (!$sectionrecord) {
-            mtrace('[create_scorm_module] Section ' . $section . ' not found, creating...');
             // Create section if it doesn't exist.
             $sectionrecord = new \stdClass();
             $sectionrecord->course = $course->id;
@@ -144,67 +121,62 @@ class scorm_creator {
             $sectionrecord->sequence = '';
             $sectionrecord->visible = 1;
             $sectionrecord->id = $DB->insert_record('course_sections', $sectionrecord);
-            mtrace('[create_scorm_module] Section created with ID: ' . $sectionrecord->id);
-        } else {
-            mtrace('[create_scorm_module] Section found with ID: ' . $sectionrecord->id);
         }
 
-        // Create course module record.
-        mtrace('[create_scorm_module] Creating course module record...');
+        // Create course module record with FIXED settings.
         $cm = new \stdClass();
         $cm->course = $course->id;
         
         try {
             $cm->module = $DB->get_field('modules', 'id', ['name' => 'scorm'], \MUST_EXIST);
-            mtrace('[create_scorm_module] SCORM module ID: ' . $cm->module);
         } catch (\Exception $e) {
-            mtrace('[create_scorm_module ERROR] SCORM module not found in database');
-            throw new \moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker', '', null, 'SCORM module not installed');
+            throw new \moodle_exception('error_scorm_creation_failed', 'local_scormvideomaker', '', null, 
+                'SCORM module not installed');
         }
         
         $cm->section = $sectionrecord->id;
         $cm->instance = 0; // Will be updated after SCORM is created.
+        
+        // FIXED CM settings.
         $cm->visible = 1;
         $cm->visibleold = 1;
         $cm->visibleoncoursepage = 1;
-        $cm->showdescription = 0;
+        $cm->showdescription = 1;
         $cm->indent = 0;
         $cm->groupmode = 0;
         $cm->groupingid = 0;
         
-        // Set completion to NONE - users will configure it themselves if needed.
-        $cm->completion = \COMPLETION_TRACKING_NONE;
+        // Completion tracking: require activity completion.
+        $cm->completion = \COMPLETION_TRACKING_AUTOMATIC;
         $cm->completionview = 0;
         $cm->completionexpected = 0;
         $cm->completiongradeitemnumber = null;
         
         $cm->added = time();
-
         $cm->id = $DB->insert_record('course_modules', $cm);
-        mtrace('[create_scorm_module] Course module created with ID: ' . $cm->id);
 
         // Create context.
         $context = \context_module::instance($cm->id);
 
-        // Create SCORM instance.
+        // Create SCORM instance with FIXED settings.
         $scorm = new \stdClass();
         $scorm->course = $course->id;
         $scorm->name = $formdata->title;
         $scorm->intro = $formdata->description ?? '';
         $scorm->introformat = \FORMAT_HTML;
         
-        // SCORM settings - use sensible defaults.
+        // FIXED SCORM settings as requested.
         $scorm->version = 'SCORM_1.2';
-        $scorm->maxgrade = 100;
+        $scorm->maxgrade = 100; // Always 100.
         $scorm->grademethod = 1; // Highest grade.
-        $scorm->maxattempt = 0; // Unlimited.
+        $scorm->maxattempt = 1; // 1 attempt only.
         $scorm->whatgrade = 0; // Highest attempt.
         $scorm->displaycoursestructure = 0;
         $scorm->skipview = 2; // Always skip.
         $scorm->hidebrowse = 1;
         $scorm->hidetoc = 3; // Always hide.
-        $scorm->nav = 1;
-        $scorm->auto = 1; // Auto-continue.
+        $scorm->nav = 0;
+        $scorm->auto = 0; // NO Auto-continue.
         $scorm->popup = 0;
         $scorm->width = 100;
         $scorm->height = 600;
@@ -212,6 +184,21 @@ class scorm_creator {
         $scorm->timemodified = time();
         $scorm->timeopen = 0;
         $scorm->timeclose = 0;
+        
+        // COMPLETION SETTINGS - based on completion_type from form.
+        // The percentage value controls when SCORM reaches "completed" status.
+        // Grade is always 100 when completed.
+        $scorm->completionstatusrequired = 4; // Require "completed" status.
+        $scorm->completionstatusallscos = 0;
+        $scorm->completionscorerequired = 0;
+        
+        if ($formdata->completion_type === 'percentage') {
+            // Complete at specific percentage.
+            $scorm->completionminprogressrequired = intval($formdata->completion_percentage ?? 100);
+        } else {
+            // Complete at end (100%).
+            $scorm->completionminprogressrequired = 100;
+        }
         
         // Package settings.
         $scorm->scormtype = 'local';
@@ -226,10 +213,8 @@ class scorm_creator {
         $scorm->displayactivityname = 1;
 
         $scormid = $DB->insert_record('scorm', $scorm);
-        mtrace('[create_scorm_module] SCORM instance created with ID: ' . $scormid);
 
         if (!$scormid) {
-            mtrace('[create_scorm_module ERROR] Failed to create SCORM instance');
             $DB->delete_records('course_modules', ['id' => $cm->id]);
             return false;
         }
@@ -237,17 +222,13 @@ class scorm_creator {
         // Update course module with SCORM instance.
         $cm->instance = $scormid;
         $DB->update_record('course_modules', $cm);
-        mtrace('[create_scorm_module] Course module updated with SCORM instance');
 
         // Upload the SCORM package file.
-        mtrace('[create_scorm_module] Uploading SCORM package...');
         if (!$this->upload_scorm_package($scormid, $cm->id, $zipfile)) {
-            mtrace('[create_scorm_module ERROR] Failed to upload SCORM package');
             $DB->delete_records('scorm', ['id' => $scormid]);
             $DB->delete_records('course_modules', ['id' => $cm->id]);
             return false;
         }
-        mtrace('[create_scorm_module] SCORM package uploaded successfully');
 
         // Update course section sequence.
         $this->update_course_section_sequence($cm->id, $sectionrecord->id);
@@ -269,18 +250,13 @@ class scorm_creator {
     private function upload_scorm_package(int $scormid, int $cmid, string $zipfile): bool {
         global $CFG, $DB;
 
-        mtrace('[upload_scorm_package] Starting upload - SCORM ID: ' . $scormid . ', CM ID: ' . $cmid);
-        mtrace('[upload_scorm_package] ZIP file: ' . $zipfile . ' (' . filesize($zipfile) . ' bytes)');
-
         require_once($CFG->dirroot . '/mod/scorm/locallib.php');
 
         $fs = get_file_storage();
         $context = \context_module::instance($cmid);
-        mtrace('[upload_scorm_package] Context ID: ' . $context->id);
 
         // Delete existing package files.
         $fs->delete_area_files($context->id, 'mod_scorm', 'package');
-        mtrace('[upload_scorm_package] Existing package files deleted');
 
         // Create file record.
         $filerecord = [
@@ -295,94 +271,32 @@ class scorm_creator {
         ];
 
         // Create the file from pathname.
-        mtrace('[upload_scorm_package] Creating file in storage...');
         $storedfile = $fs->create_file_from_pathname($filerecord, $zipfile);
 
         if (!$storedfile) {
-            mtrace('[upload_scorm_package ERROR] Failed to create stored file');
             return false;
         }
-        mtrace('[upload_scorm_package] File stored successfully, hash: ' . $storedfile->get_contenthash());
 
         // Get the full SCORM record from database.
         $scorm = $DB->get_record('scorm', ['id' => $scormid], '*', \MUST_EXIST);
-        mtrace('[upload_scorm_package] SCORM record retrieved');
         
         // Set required properties for scorm_parse.
         $scorm->pkgtype = 'zip';
         $scorm->reference = $storedfile->get_filename();
         $scorm->sha1hash = $storedfile->get_contenthash();
         $scorm->revision = 0;
-        mtrace('[upload_scorm_package] SCORM properties set for parsing');
         
-        // Parse the SCORM package - this extracts and processes the content.
-        mtrace('[upload_scorm_package] Starting SCORM package parsing...');
+        // Parse the SCORM package.
+        scorm_parse($scorm, false);
         
-        // DEBUG: Extract and log the manifest content before parsing
-        $za = new \ZipArchive();
-        if ($za->open($zipfile) === true) {
-            $manifestcontent = $za->getFromName('imsmanifest.xml');
-            if ($manifestcontent) {
-                mtrace('[upload_scorm_package DEBUG] Manifest content (first 500 chars):');
-                mtrace(substr($manifestcontent, 0, 500));
-                
-                // Validate XML
-                libxml_use_internal_errors(true);
-                $xml = simplexml_load_string($manifestcontent);
-                if ($xml === false) {
-                    mtrace('[upload_scorm_package ERROR] Invalid XML in manifest!');
-                    foreach (libxml_get_errors() as $error) {
-                        mtrace('[XML ERROR] Line ' . $error->line . ': ' . trim($error->message));
-                    }
-                    libxml_clear_errors();
-                } else {
-                    mtrace('[upload_scorm_package DEBUG] XML is valid');
-                }
-            } else {
-                mtrace('[upload_scorm_package ERROR] imsmanifest.xml not found in ZIP!');
-            }
-            $za->close();
-        }
-        
-        // Capture any output from scorm_parse
-        ob_start();
-        $parsesuccess = scorm_parse($scorm, false);
-        $parseoutput = ob_get_clean();
-        
-        if ($parseoutput) {
-            mtrace('[upload_scorm_package DEBUG] Parser output: ' . trim($parseoutput));
-        }
-        
-        // Check if SCOs were created - this is the real indicator of success
+        // Check if SCOs were created.
         $scos = $DB->get_records('scorm_scoes', ['scorm' => $scormid]);
-        $scocount = count($scos);
-        mtrace('[upload_scorm_package DEBUG] Number of SCOs created: ' . $scocount);
         
-        if (!empty($scos)) {
-            foreach ($scos as $sco) {
-                mtrace('[upload_scorm_package DEBUG] SCO: ' . $sco->identifier . ' - ' . $sco->title);
-            }
-        }
-        
-        // Consider parsing successful if SCOs were created and launch is set
-        // scorm_parse() can return false even when it works (e.g., for warnings)
-        if ($scocount > 0 && !empty($scorm->launch)) {
-            mtrace('[upload_scorm_package] SCORM package parsed successfully (SCOs created: ' . $scocount . ', launch: ' . $scorm->launch . ')');
+        if (!empty($scos) && !empty($scorm->launch)) {
             // Update the scorm record with parsed data.
             $DB->update_record('scorm', $scorm);
-            mtrace('[upload_scorm_package] SCORM record updated with parsed data');
             return true;
         }
-        
-        // If we get here, parsing really failed
-        mtrace('[upload_scorm_package ERROR] SCORM parsing failed - no SCOs created or no launch point');
-        mtrace('[upload_scorm_package ERROR] Parse return value: ' . ($parsesuccess ? 'true' : 'false'));
-        mtrace('[upload_scorm_package ERROR] SCORM object after parse attempt: ' . json_encode($scorm));
-        
-        // DEBUG: Copy failed ZIP to /tmp for inspection
-        $debugzip = '/tmp/scorm_debug_' . time() . '.zip';
-        copy($zipfile, $debugzip);
-        mtrace('[upload_scorm_package DEBUG] Failed ZIP copied to: ' . $debugzip);
         
         return false;
     }
@@ -406,4 +320,3 @@ class scorm_creator {
         $DB->update_record('course_sections', $section);
     }
 }
-

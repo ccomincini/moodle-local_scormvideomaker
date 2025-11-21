@@ -108,3 +108,5 @@ docker-compose.override.yml
 local_config.php
 dev_notes.txt
 testing.md
+TROUBLESHOOTING.md
+TEST_LOG_INSTRUCTIONS.md
